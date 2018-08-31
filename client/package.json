@@ -6,7 +6,12 @@
     "@material-ui/core": "^1.5.1",
     "@material-ui/icons": "^2.0.1",
     "ajv": "^6.5.3",
+    "axios": "^0.18.0",
+    "moment": "^2.22.2",
+    "moment-range": "^2.2.0",
     "react": "^16.4.2",
+    "react-calendar": "^2.17.1",
+    "react-datepicker": "^1.6.0",
     "react-dom": "^16.4.2",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.5"
