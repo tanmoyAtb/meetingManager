@@ -40,7 +40,6 @@ class Layout extends Component {
     if(this.state.logged){
       template = <LandingPage/>
     }
-    console.log("ajsgjdag")
     return (
       <div>
         {template}

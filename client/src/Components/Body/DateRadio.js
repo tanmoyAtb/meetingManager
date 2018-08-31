@@ -60,7 +60,6 @@ class DateRadio extends React.Component {
   };
 
   onChange = date => {
-    console.log(date);
     const aMoment = moment(date);
 
     this.setState({ dateDate: date, dateString: aMoment.format('DD/MM/YYYY'), dateMoment: aMoment, open: false})
@@ -75,12 +74,10 @@ class DateRadio extends React.Component {
     else {
       this.setState({ dateString: date});
     }
-    
   }
  
   render() {
     const  { classes } = this.props;
-    console.log(this.state.dateMoment, this.state.dateMoment.isValid(), this.state.dateDate);
     return (
       <div style={{display: 'flex'}}>
       	<div className="myContainter">
