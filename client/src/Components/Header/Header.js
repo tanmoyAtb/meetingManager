@@ -33,8 +33,8 @@ class MenuAppBar extends React.Component {
       <div className={classes.root}>
         <AppBar position="static" className={classes.bar}>
           <Toolbar style={{padding: 0}}>
-            <Typography variant="title" color="inherit" className={classes.flex}>
-              MeetUp
+            <Typography variant="display1" color="inherit" style={{color: '#FFF', fontFamily: 'Dekko'}} className={classes.flex}>
+              MeetGo
             </Typography>
               <div>
                 <div style= {{display: 'flex'}}>

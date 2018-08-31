@@ -12,8 +12,8 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Email from "@material-ui/icons/Email";
 import Grid from '@material-ui/core/Grid';
-
-
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 
 import styles from "./loginPageStyle";
 
@@ -41,6 +41,9 @@ class LoginPage extends React.Component {
     
     return (
       <div className={classes.container}>
+            <Typography variant="display2" style={{color: '#3d81a9', fontFamily: 'Dekko', fontWeight: 'bold'}} gutterBottom>
+              MeetGo
+            </Typography>
             <FormControl className={classes.margin}>
               <InputLabel htmlFor="input-with-icon-adornment">Username</InputLabel>
               <Input
