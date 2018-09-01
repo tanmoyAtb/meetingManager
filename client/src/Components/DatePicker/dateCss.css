@@ -13,13 +13,14 @@ label {
 
 .react-datepicker__input-container {
   min-width: 160px;
+
 } 
 
 .myDateLarge {
   width: 100%;
   font-size: 16px;
   border: 1px solid #c4c4c4;
-  border-radius: 5px;
+  border-radius: 0px;
   background-color: #fff;
   padding: 8px 10px;
   box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
@@ -27,16 +28,27 @@ label {
   background:#fff url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)  97% 50% no-repeat ;
 }
 
+.myDateLarge:focus { 
+    border:1px solid #01579B;
+    border-radius: 0px;
+}
+
 .myDateSmall {
   width: 100%;
   font-size: 16px;
   border: 1px solid #c4c4c4;
-  border-radius: 5px;
+  border-radius: 0px;
   background-color: #fff;
   padding: 8px 10px;
   box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
   color : black;
-  min-width: 100px;
+  min-width: 140px;
+  max-width: 200px;
+}
+
+.myDateSmall:focus { 
+    border:1px solid #01579B;
+    border-radius: 0px;
 }
 
 @media only screen and (max-width: 960px) {
@@ -59,4 +71,11 @@ label {
   .dateBoxSmall {
     display: none
   }
+}
+
+.bigClass {
+  font-size: 22px;
+  color: #263238;
+  margin-bottom: 16px;
+  font-family: Helvetica;
 }

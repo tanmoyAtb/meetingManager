@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles';
-import DateRadio from './DateRadio';
-import CardBox from '../Card/CardBox';
+import Card from './Card';
 
 const styles = theme => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
-    flexFlow: "column",
-    padding: "16px 20%",
+    padding: "8px 20%",
     [theme.breakpoints.down("sm")]: {
       padding: "8px 12px",
     }
@@ -23,9 +21,14 @@ class Body extends Component {
   	const { classes } = this.props;
 
     return (
-      <div className={classes.container}>
-        <DateRadio/>
-        <CardBox/>
+      <div>
+        <Card/>
+        <Card/>
+        <Card/>
+        <Card/>
+        <Card/>
+        <Card/>
+        <Card/>
       </div>
     );
   }

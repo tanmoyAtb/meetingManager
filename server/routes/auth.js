@@ -8,41 +8,21 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
 
-authRouter.route('/signup/email')
-    .post(function(req, res) {
-        console.log(req.body);
-        if(!req.body.name || !req.body.email || !req.body.password){
-          return res.status(403).send({success: false, msg: "Arguments not correct"});
-        }
-        else{
-          User.upsertUserEmail(req.body.name, req.body.email, req.body.password, function(err, user) {
-              if(err){
-                return res.status(403).send({success: false, msg: err});
-              }
-              else {
-                console.log("success");
-                let token = jwt.sign(user.toJSON(), config.secret);
-                res.json({success: true, token: 'JWT ' + token, name: user.name, username: user.username});
-              }
-          });
-        }
-    });
-
-authRouter.route('/login/email')
-    .post(function(req, res){
-        if(!req.body.email || !req.body.password){
-            return res.status(403).send({success: false, msg: "Arguments not correct"});
-        }
-        User.checkUserEmail(req.body.email, req.body.password, function(err, user) {
-            if (err) {
-              return res.status(403).send({success: false, msg: err});
-            }
-            else {
-              let token = jwt.sign(user.toJSON(), config.secret);
-              res.json({success: true, token: 'JWT ' +token, name: user.name, username: user.username});
-            } 
-        });
-    });
+authRouter.route('/login')
+  .post(function(req, res){
+      if(!req.body.username || !req.body.password){
+          return res.status(403).send({success: false, msg: "Fill Up all details"});
+      }
+      User.checkUser(req.body.username, req.body.password, function(err, user) {
+          if (err) {
+            return res.status(403).send({success: false, msg: err});
+          }
+          else {
+            let token = jwt.sign(user.toJSON(), config.secret);
+            res.json({success: true, token: 'JWT ' +token, name: user.name, username: user.username});
+          } 
+      });
+  });
 
 authRouter.get('/profile', passport.authenticate('jwt', { session: false}), function(req, res) {
   // console.log('headers' , req.headers)

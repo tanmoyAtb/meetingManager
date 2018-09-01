@@ -8,7 +8,7 @@ class LandingPage extends Component {
   render() {
     return (
       <div>
-        <Header/>
+        <Header {...this.props}/>
         <Body/>
       </div>
     );
