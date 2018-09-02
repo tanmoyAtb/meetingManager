@@ -7,31 +7,89 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Select from 'react-select';
+import moment from 'moment';
+
+import Axios from 'Utils/Axios';
 
 class AddMeeting extends Component {
   constructor(props) {
         super(props);
         this.state = {
             rtl: true,
-            option_cuisine: '',
+            attendees: [],
+            date: new Date(),
+            time: '',
+            time_from: '',
+            time_to: '',
+            client: '',
+            title: '',
+            location: '',
+            description: '',
+            summary: '',
         };
 
   }
 
-  handleCuisineChange = (selectedOption) => {
-        //console.log(selectedOption);
-        this.setState({option_cuisine: selectedOption});
+  meetingUserChange = (selectedOption) => {
+        this.setState({attendees: selectedOption});
+  }
+
+  dateChange = (date) => {
+    this.setState({date: date});
+  }
+
+  timeChange = (e) => {
+    this.setState({time: moment(e.target.value, 'HH:mm').toDate()});
+  }
+
+  timeFromChange = (e) => {
+    this.setState({time_from: moment(e.target.value, 'HH:mm').toDate()});
+  }
+
+  timeToChange = (e) => {
+    this.setState({time_to: moment(e.target.value, 'HH:mm').toDate()});
+  }
+
+  titleChange = (e) => {
+    this.setState({title: e.target.value});
+  }
+
+  clientChange = (e) => {
+    this.setState({client: e.target.value});
+  }
+
+  locationChange = (e) => {
+    this.setState({location: e.target.value});
+  }
+
+  descriptionChange = (e) => {
+    this.setState({description: e.target.value});
+  }
+
+  summaryChange = (e) => {
+    this.setState({summary: e.target.value});
+  }
+
+  addMeeting = (e) => {
+    const states = this.state;
+    if(states.date && states.time && states.title && states.client && states.location && states.attendees.length && states.description){
+       Axios.postMeeting(states, function(err, data){
+          if(err) console.log(err);
+          else {
+            console.log(data);
+          }
+       })
     }
+  }
 
 
   render() {
     const { classes } = this.props;
 
-    const option_cuisine = [
-      { value: 'chocolate', label: 'Chocolate' },
-      { value: 'strawberry', label: 'Strawberry' },
-      { value: 'vanilla', label: 'Vanilla' }
-    ];
+    const attendees = []; 
+    this.props.attendees.forEach(function(attendee){
+      attendees.push({id: attendee._id, value: attendee.username, label: attendee.name});
+    })
 
     return (
       <div className={classes.container}>
@@ -39,19 +97,21 @@ class AddMeeting extends Component {
               Add Meeting
           </Typography>
           <div  className={classes.spacing}>
-            <DatePicker big/>
+            <DatePicker big dateChange={this.dateChange}/>
           </div>
 
           <TextField
             id="time"
             label="Time"
             type="time"
-            defaultValue="10:00"
+            required
+            onChange={this.timeChange}
             className={classes.spacing}
             InputLabelProps={{
               FormLabelClasses: {
                 root: classes.label,
               },
+              shrink: true,
               focused: false
             }}
             inputProps={{
@@ -68,11 +128,12 @@ class AddMeeting extends Component {
               id="time"
               label="Time From"
               type="time"
-              defaultValue="10:00"
+              onChange={this.timeFromChange}
               InputLabelProps={{
                 FormLabelClasses: {
                   root: classes.label,
                 },
+                shrink: true,
                 focused: false
               }}
               inputProps={{
@@ -87,11 +148,12 @@ class AddMeeting extends Component {
               id="time"
               label="Time To"
               type="time"
-              defaultValue="12:00"
+              onChange={this.timeToChange}
               InputLabelProps={{
                 FormLabelClasses: {
                   root: classes.label,
                 },
+                shrink: true,
                 focused: false
               }}
               inputProps={{
@@ -106,7 +168,9 @@ class AddMeeting extends Component {
 
           <TextField
             label="Title"
+            required
             className={classes.spacing}
+            onChange={this.titleChange}
             InputLabelProps={{
               FormLabelClasses: {
                 root: classes.label,
@@ -126,6 +190,8 @@ class AddMeeting extends Component {
 
           <TextField
             label="Client"
+            required
+            onChange={this.clientChange}
             InputLabelProps={{
               shrink: true,
             }}
@@ -150,6 +216,7 @@ class AddMeeting extends Component {
            <TextField
             id="multiline-flexible"
             label="Location"
+            onChange={this.locationChange}
             multiline
             InputLabelProps={{
               FormLabelClasses: {
@@ -177,12 +244,12 @@ class AddMeeting extends Component {
               <Select
                   id="Attendees"
                   isMulti
-                  onChange={this.handleCuisineChange}
-                  options={option_cuisine}
+                  onChange={this.meetingUserChange}
+                  options={attendees}
                   placeholder="Select Attendee"
                   rtl={this.state.rtl}
                   simpleValue
-                  value={this.state.option_cuisine}
+                  value={this.state.attendees}
                   
               />
             </div>
@@ -192,6 +259,7 @@ class AddMeeting extends Component {
           <TextField
             id="multiline-static"
             label="Description"
+            onChange={this.descriptionChange}
             multiline
             rows="4"
             rowsMax="10"
@@ -215,7 +283,7 @@ class AddMeeting extends Component {
             style={{maxWidth: 600}}
           />
 
-          <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} color="primary" className={classes.spacing}>
+          <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
               Add Meeting
           </Button>
         

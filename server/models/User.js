@@ -19,19 +19,27 @@ const UserSchema = new Schema({
 
 UserSchema.statics.checkUser = function(username, password, cb) {
     var that = this;
-    return this.findOne({ username: username}, function(err, user) {
+    this.findOne({ username: username}, function(err, user) {
         if (err) cb("Server error", null);
-        console.log(username);
         if (!user) {
             cb("User not found", null);
         } else {
-            // check if password matches
             if(password == user.password){
                 cb(null, user)
             }
             else {
                 cb("Username & Password don't match", null)
             }
+        }
+    });
+};
+
+UserSchema.statics.getUserlist = function(cb) {
+    var that = this;
+    this.find(function(err, users) {
+        if (err) cb("Server error", null);
+        else{
+            cb(null, users);
         }
     });
 };

@@ -41,6 +41,7 @@ class DatePickerComp extends React.Component {
       dateDate: date.toDate(),
       dateString: date.format('DD/MM/YYYY')
     });
+    this.props.dateChange(date.toDate());
   }
 
   handleClickOpen = () => {
@@ -53,14 +54,15 @@ class DatePickerComp extends React.Component {
 
   onChange = date => {
     const aMoment = moment(date);
-
-    this.setState({ dateDate: date, dateString: aMoment.format('DD/MM/YYYY'), dateMoment: aMoment, open: false})
+    this.setState({ dateDate: date, dateString: aMoment.format('DD/MM/YYYY'), dateMoment: aMoment, open: false});
+    this.props.dateChange(date);
   }
 
   smallDateChange = e => {
     let date = e.target.value;
     let aMoment = moment(date, 'DD/MM/YYYY');
     if(aMoment.isValid()){
+      this.props.dateChange(aMoment.toDate());
       this.setState({ dateMoment: aMoment, dateString: date, dateDate: aMoment.toDate()});
     }
     else {

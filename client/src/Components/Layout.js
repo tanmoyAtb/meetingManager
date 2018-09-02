@@ -5,6 +5,8 @@ import LandingPage from './LandingPage';
 import AddLayout from './AddMeeting/AddLayout';
 import Meeting from './Meeting/Meeting';
 
+import Axios from 'Utils/Axios';
+
 class Layout extends Component {
   constructor(props) {
         super(props);
@@ -21,38 +23,28 @@ class Layout extends Component {
   }
 
   handleLogout = (e) => {
-      localStorage.removeItem('jwtToken');
-      localStorage.removeItem('name');
-      localStorage.removeItem('username');
-      this.setState({logged: 'login', name: '', username: ''});
-      this.props.history.push('/');
+    let that = this;
+    Axios.logout(function(){
+      that.setState({logged: 'login', name: '', username: ''})
+      that.props.history.push('/');
+    })
   }
 
 
   componentDidMount() {
-      if(localStorage.getItem('jwtToken')){
-        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-      
-        axios.get('http://localhost:5000/auth/profile')
-          .then(res => {
-            this.setState({ name: res.data.user.name, username: res.data.user.username, logged: 'loggedin' });
-          })
-          .catch((error) => {
-             console.error(error);
-             localStorage.removeItem('jwtToken');
-             localStorage.removeItem('name');
-             this.setState({logged: 'login', name: '', username: ''});
-          });
-          
-      }
-      else {
-        this.setState({logged: 'login', name: '', username: ''});
-      }
+      let that=this;
+      Axios.getProfile(function(err, data){
+        if (err) that.setState({logged: 'login', name: '', username: ''});
+        else {
+          that.setState({ name: data.user.name, username: data.user.username, logged: 'loggedin' });
+        }
+      })
   }
 
 
   render() {
     let template;
+
     if(this.state.logged === 'loggedin'){
       template = <LandingPage {...this.props} logout={this.handleLogout}/>
     }

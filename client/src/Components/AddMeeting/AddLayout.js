@@ -3,27 +3,50 @@ import axios from 'axios';
 import AddHeader from './AddHeader';
 import AddMeeting from './AddMeeting';
 
+
+import Axios from 'Utils/Axios';
+
 class Layout extends Component {
   constructor(props) {
         super(props);
         this.state = {
+          logged: 'wait',
+          name: '',
+          username: '',
+          attendees: []
         };
 
   }
 
   handleLogout = (e) => {
-      localStorage.removeItem('jwtToken');
-      localStorage.removeItem('name');
-      localStorage.removeItem('username');
-      this.props.history.push('/');
+      let that = this;
+      Axios.logout(function(){
+        that.props.history.push('/');
+      })
   }
 
+componentDidMount() {
+    let that=this;
+    Axios.getMeeting(function(err, data){
+      if (err) that.props.history.push('/');
+      else {
+        that.setState({ name: data.user.name, username: data.user.username, attendees: data.meetingUsers, logged: 'loggedin' });
+      }
+    })
+}
 
   render() {
+    let template;
+
+    if (this.state.logged === 'loggedin'){
+      template = <div>
+                    <AddHeader {...this.props} logout={this.handleLogout}/>
+                    <AddMeeting attendees={this.state.attendees}/>
+                  </div>
+    }
     return (
       <div>
-        <AddHeader {...this.props} logout={this.handleLogout}/>
-        <AddMeeting/>
+        {template}
       </div>
     );
   }

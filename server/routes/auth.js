@@ -7,6 +7,7 @@ require('../settings/passport')(passport);
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
+const Meeting = require('../models/Meeting');
 
 authRouter.route('/login')
   .post(function(req, res){
@@ -25,14 +26,50 @@ authRouter.route('/login')
   });
 
 authRouter.get('/profile', passport.authenticate('jwt', { session: false}), function(req, res) {
-  // console.log('headers' , req.headers)
   let token = getToken(req.headers);
-  // console.log('token' , token);
-  // console.log('user' , req.user);
   if (token) {
     return res.json({success: true, msg: 'authorized.', user: req.user});
   } else {
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
+  }
+});
+
+authRouter.post('/meeting', passport.authenticate('jwt', { session: false}), function(req, res) {
+  let token = getToken(req.headers);
+  if (token) {
+    let User = {
+                id: req.user._id,
+                name: req.user.name,
+                username: req.user.username
+              };
+
+    Meeting.insertMeeting(req.body, User, function(err, meeting){
+      if (err) {
+        return res.status(403).send({success: false, authorized: false, msg: 'Server Error.'});
+      }
+      else {
+        return res.json({success: true, authorized: true, meeting: meeting});
+      }
+    })
+  } 
+  else {
+    return res.status(403).send({success: false, authorized: false, msg: 'Unauthorized.'});
+  }
+});
+
+authRouter.get('/meeting', passport.authenticate('jwt', { session: false}), function(req, res) {
+  let token = getToken(req.headers);
+  if (token) {
+    User.getUserlist(function(err, users){
+      if(err) {
+        return res.status(403).send({success: false, authorized: true, msg: 'Server Error.'});
+      }
+      else {
+        return res.json({success: true, authorized: true, user: req.user, meetingUsers: users});
+      }
+    })
+  } else {
+    return res.status(403).send({success: false, authorized: false, msg: 'Unauthorized.'});
   }
 });
 

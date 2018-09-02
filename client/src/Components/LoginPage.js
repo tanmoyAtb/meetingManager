@@ -12,8 +12,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Email from "@material-ui/icons/Email";
 import Typography from '@material-ui/core/Typography';
 
-import config from './config';
-import axios from 'axios';
+import Axios from 'Utils/Axios';
 
 import styles from "./loginPageStyle";
 
@@ -38,32 +37,13 @@ class LoginPage extends React.Component {
   }
 
   login = (e) => {
-    console.log(this.state);
-    if(this.state.username && this.state.password){
-
-      axios.post(config.url + '/auth/login', {username : this.state.username, password: this.state.password})
-        .then(res => {
-            if(res.data && res.data.success){
-                // console.log(res);
-                axios.defaults.headers.common['Authorization'] = res.data.token;
-                localStorage.setItem('jwtToken', res.data.token);
-                localStorage.setItem('name', res.data.name);
-                localStorage.setItem('username', res.data.username);
-                this.props.loggedIn(res.data);
-            }
-          })
-        .catch((error) => {
-            if(error.response && error.response.data){
-              this.setState({msgLogin : error.response.data.msg});
-            }
-            else {
-              this.setState({msgLogin : 'Server not responding'});
-            }
-        });
-    }
-    else {
-      this.setState({msgLogin : "Fill Up all details"});
-    }
+    let that=this;
+    Axios.login(this.state.username, this.state.password, function(err, data){
+      if(err) that.setState({msgLogin : err});
+      else {
+        that.props.loggedIn(data);
+      }
+    })
   }
 
 
