@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import AddHeader from './AddHeader';
 import AddMeeting from './AddMeeting';
-
+import Loader from 'Components/Loader/Loader';
 
 import Axios from 'Utils/Axios';
 
@@ -36,7 +35,7 @@ componentDidMount() {
 }
 
   render() {
-    let template;
+    let template = <Loader/>;
 
     if (this.state.logged === 'loggedin'){
       template = <div>

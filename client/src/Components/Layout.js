@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import LoginPage from './LoginPage';
 import LandingPage from './LandingPage';
-import AddLayout from './AddMeeting/AddLayout';
-import Meeting from './Meeting/Meeting';
+import Loader from 'Components/Loader/Loader';
 
 import Axios from 'Utils/Axios';
 
@@ -13,13 +11,51 @@ class Layout extends Component {
         this.state = {
           logged: 'wait',
           name: '',
-          username: ''
+          username: '',
+          users: [],
+          allMeetings: [],
+          filteredMeetings: [],
+          user: {id: false, value: "All", label: "All"}
         };
 
   }
 
   loggedIn = (data) => {
-    this.setState({logged: 'loggedin', name: data.name, username: data.username});
+    this.setState({logged: 'loggedin', name: data.name, username: data.username, users: data.users, allMeetings: data.meetings, filteredMeetings: data.meetings});
+  }
+
+  onDateChange = (date) => {
+    let that = this;
+    Axios.getHomeMeetingsAndUsers(date, function(err, data){
+        if (err) {
+          that.setState({logged: 'login', name: '', username: ''});
+        }
+        else {
+          that.setState({logged: 'loggedin', name: data.name, username: data.username, users: data.users,
+                         allMeetings: data.meetings, filteredMeetings: data.meetings, user: {id: false, value: "All", label: "All"} });
+        }
+      })
+  }
+
+  userChange = (selected) => {
+    this.setState({user: selected});
+    if(selected.id){
+      let meetingsFiltered = [];
+      this.state.allMeetings.forEach(function(meeting){
+        for(let i=0;i<meeting.attendees.length;i++){
+          if(meeting.attendees[i].id === selected.id){
+            meetingsFiltered.push(meeting);
+            break;
+          }
+        }
+      })
+      this.setState({filteredMeetings: meetingsFiltered});
+    }
+    else{
+      let meetingsFiltered = this.state.allMeetings;
+      this.setState({filteredMeetings: meetingsFiltered});
+    }
+    
   }
 
   handleLogout = (e) => {
@@ -33,20 +69,24 @@ class Layout extends Component {
 
   componentDidMount() {
       let that=this;
-      Axios.getProfile(function(err, data){
-        if (err) that.setState({logged: 'login', name: '', username: ''});
+      Axios.getHomeMeetingsAndUsers(new Date(), function(err, data){
+        if (err) {
+          console.log(err);
+          that.setState({logged: 'login', name: '', username: ''});
+        }
         else {
-          that.setState({ name: data.user.name, username: data.user.username, logged: 'loggedin' });
+          that.setState({logged: 'loggedin', name: data.name, username: data.username, users: data.users, allMeetings: data.meetings, filteredMeetings: data.meetings});
         }
       })
   }
 
 
   render() {
-    let template;
+    let template = <Loader />;
 
     if(this.state.logged === 'loggedin'){
-      template = <LandingPage {...this.props} logout={this.handleLogout}/>
+      template = <LandingPage {...this.props} onDateChange={this.onDateChange} users={this.state.users} 
+                    meetings={this.state.filteredMeetings} userChange={this.userChange} logout={this.handleLogout} user={this.state.user}/>
     }
     else if(this.state.logged === 'login') {
       template = <LoginPage loggedIn={this.loggedIn}/>

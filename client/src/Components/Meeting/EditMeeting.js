@@ -6,32 +6,40 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
 import Select from 'react-select';
 import moment from 'moment';
 
 import Axios from 'Utils/Axios';
+import Helpers from 'Utils/Helpers';
 
-class AddMeeting extends Component {
+class EditMeeting extends Component {
   constructor(props) {
-        super(props);
-        this.state = {
-            open: false,
-            rtl: true,
-            attendees: [],
-            date: new Date(),
-            time: '',
-            time_from: '',
-            time_to: '',
-            client: '',
-            title: '',
-            location: '',
-            description: '',
-            summary: '',
-        };
+      super(props);
+      const { meeting } = props;
+
+      const attendees = []; 
+      meeting.attendees.forEach(function(attendee){
+        attendees.push({id: attendee._id, value: attendee.username, label: attendee.name});
+      })
+
+
+      this.state = {
+          open: false,
+          rtl: true,
+          attendees: attendees,
+          date: new Date(meeting.date),
+          time: new Date(meeting.time),
+          time_from: new Date(meeting.time_from),
+          time_to: new Date(meeting.time_to),
+          client: meeting.client,
+          title: meeting.title,
+          location: meeting.location,
+          description: meeting.description,
+          summary: meeting.summary,
+          attendees_options: []
+
+      };
+
 
   }
 
@@ -83,17 +91,21 @@ class AddMeeting extends Component {
     this.setState({summary: e.target.value});
   }
 
-  addMeeting = (e) => {
+  editMeeting = (e) => {
     const states = this.state;
-    let that = this;
     if(states.date && states.time && states.title && states.client && states.location && states.attendees.length && states.description){
-       Axios.postMeeting(states, function(err, data){
-          if(err) console.log(err);
-          else {
-            that.handleClickOpen();
-          }
-       })
+       this.props.onEditMeeting(states);
     }
+  }
+
+  componentDidMount() {
+      let that=this;
+      Axios.getMeeting(function(err, data){
+        if (err) return;
+        else {
+          that.setState({attendees_options: data.meetingUsers});
+        }
+      })
   }
 
 
@@ -101,17 +113,17 @@ class AddMeeting extends Component {
     const { classes } = this.props;
 
     const attendees = []; 
-    this.props.attendees.forEach(function(attendee){
+    this.state.attendees_options.forEach(function(attendee){
       attendees.push({id: attendee._id, value: attendee.username, label: attendee.name});
     })
 
     return (
       <div className={classes.container}>
           <Typography variant="display1" style={{color: '#263238', marginBottom: 16}} gutterBottom>
-              Add Meeting
+              Edit Meeting
           </Typography>
           <div  className={classes.spacing}>
-            <DatePicker big dateChange={this.dateChange}/>
+            <DatePicker big dateChange={this.dateChange} date={this.state.date}/>
           </div>
 
           <TextField
@@ -119,6 +131,7 @@ class AddMeeting extends Component {
             label="Time"
             type="time"
             required
+            defaultValue={Helpers.format_time_string(new Date(this.props.meeting.time))}
             onChange={this.timeChange}
             className={classes.spacing}
             InputLabelProps={{
@@ -129,9 +142,9 @@ class AddMeeting extends Component {
               focused: false
             }}
             inputProps={{
-              step: 300, 
-              style: {marginTop: 8}
-            }}
+                step: 300, 
+                style: {marginTop: 8}
+              }}
             style={{maxWidth: 600}}
           />
 
@@ -140,6 +153,7 @@ class AddMeeting extends Component {
               id="time"
               label="Time From"
               type="time"
+              defaultValue={this.props.meeting.time_from && Helpers.format_time_string(new Date(this.props.meeting.time_from))}
               onChange={this.timeFromChange}
               InputLabelProps={{
                 FormLabelClasses: {
@@ -158,6 +172,7 @@ class AddMeeting extends Component {
               id="time"
               label="Time To"
               type="time"
+              defaultValue={this.props.meeting.time_to && Helpers.format_time_string(new Date(this.props.meeting.time_to))}
               onChange={this.timeToChange}
               InputLabelProps={{
                 FormLabelClasses: {
@@ -179,6 +194,7 @@ class AddMeeting extends Component {
             required
             className={classes.spacing}
             onChange={this.titleChange}
+            defaultValue={this.props.meeting.title}
             InputLabelProps={{
               FormLabelClasses: {
                 root: classes.label,
@@ -197,6 +213,7 @@ class AddMeeting extends Component {
           <TextField
             label="Client"
             required
+            defaultValue={this.props.meeting.client}
             onChange={this.clientChange}
             className={classes.spacing}
             InputLabelProps={{
@@ -214,9 +231,10 @@ class AddMeeting extends Component {
             style={{maxWidth: 600}}
           />
 
-           <TextField
+          <TextField
             label="Location"
             required
+            defaultValue={this.props.meeting.location}
             onChange={this.locationChange}
             className={classes.spacing}
             InputLabelProps={{
@@ -257,6 +275,7 @@ class AddMeeting extends Component {
             label="Description"
             onChange={this.descriptionChange}
             multiline
+            defaultValue={this.props.meeting.description}
             rows="4"
             rowsMax="10"
             InputLabelProps={{
@@ -271,38 +290,18 @@ class AddMeeting extends Component {
                 style: {marginTop: 8}
               }}
             className={classes.spacing}
-            defaultValue=""
             margin="normal"
             placeholder="Description"
             style={{maxWidth: 600}}
           />
 
-          <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
-              Add Meeting
+          <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.editMeeting} color="primary" className={classes.spacing}>
+              Edit Meeting
           </Button>
-
-
-          <Dialog
-              open={this.state.open}
-              keepMounted
-              onClose={this.handleClose}
-              aria-labelledby="alert-dialog-slide-title"
-              aria-describedby="alert-dialog-slide-description"
-              PaperProps={{style: {flex: 1}}}
-            >
-              <DialogTitle id="alert-dialog-slide-title">
-                {"Meeting Added Successfully"}
-              </DialogTitle>
-              <DialogActions>
-                <Button onClick={this.handleClose} color="primary">
-                  Done
-                </Button>
-              </DialogActions>
-            </Dialog>
         
       </div>
     );
   }
 }
 
-export default withStyles(styles)(AddMeeting);
+export default withStyles(styles)(EditMeeting);

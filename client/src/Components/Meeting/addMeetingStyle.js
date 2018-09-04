@@ -1,4 +1,4 @@
-const styles = theme =>  ({
+const styles = theme => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -9,19 +9,19 @@ const styles = theme =>  ({
       padding: "8px 12px",
     }
   },
-  
-  btn: {
-    [theme.breakpoints.down("sm")]: {
-      padding: 8, minWidth: 36
-    }
-  },
-  button: {
-    marginBottom: 16
+  spacing: {
+  	marginTop: 30
   },
   label: {
-    fontSize: 30,
-    color: "#263238",
-    position: 'relative'
+  	fontSize: 30,
+  	color: "#263238",
+  	position: 'relative'
+  },
+  input: {
+  	marginTop: 0,
+  },
+  focus: {
+  	color: '#263238'
   }
 });
 

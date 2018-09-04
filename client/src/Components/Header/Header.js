@@ -3,13 +3,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
-
-import { Link } from "react-router-dom";
 
 import styles from './headerStyle';
 
@@ -34,7 +31,6 @@ class MenuAppBar extends React.Component {
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
 
     return (
       <div className={classes.root}>
@@ -53,7 +49,7 @@ class MenuAppBar extends React.Component {
               <div>
                 <div style= {{display: 'flex'}}>
                   <Button
-                    onClick={() => {this.props.history.push('/add')}}
+                    href="/add"
                     color="inherit"
                     variant="outlined">
                     Add Meeting

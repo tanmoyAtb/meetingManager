@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles';
 import Card from './Card';
 
@@ -18,17 +17,18 @@ const styles = theme => ({
 class Body extends Component {
 
   render() {
-  	const { classes } = this.props;
-
     return (
       <div>
-        <Card/>
-        <Card/>
-        <Card/>
-        <Card/>
-        <Card/>
-        <Card/>
-        <Card/>
+        {!this.props.meetings.length && "No Meetings"
+
+        }
+        {
+          this.props.meetings.map(function(meeting){
+            return (
+                <Card key={meeting._id} meeting={meeting}/>
+              )
+          })
+        }
       </div>
     );
   }

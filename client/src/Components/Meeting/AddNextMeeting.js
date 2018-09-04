@@ -31,6 +31,7 @@ class AddMeeting extends Component {
             location: '',
             description: '',
             summary: '',
+            attendees_options: []
         };
 
   }
@@ -42,6 +43,10 @@ class AddMeeting extends Component {
   handleClose = () => {
     this.setState({ open: false });
   };
+
+  handleDone = () => {
+    this.props.history.push("/");
+  }
 
   meetingUserChange = (selectedOption) => {
         this.setState({attendees: selectedOption});
@@ -87,13 +92,34 @@ class AddMeeting extends Component {
     const states = this.state;
     let that = this;
     if(states.date && states.time && states.title && states.client && states.location && states.attendees.length && states.description){
-       Axios.postMeeting(states, function(err, data){
-          if(err) console.log(err);
-          else {
-            that.handleClickOpen();
-          }
-       })
+      console.log(states);
+      let prevMeeting = {
+        id: this.props.meeting._id,
+        date: new Date(this.props.meeting.date),
+        title: this.props.meeting.title,
+        client: this.props.meeting.client
+      };
+
+      Axios.postNextMeeting(prevMeeting, states, function(err, meeting){
+        if(err){
+          console.log(err);
+            if(err === 'unauthorized') that.props.history.push("/");
+        }
+        else {
+          that.handleClickOpen();
+        }
+      })
     }
+  }
+
+  componentDidMount() {
+      let that=this;
+      Axios.getMeeting(function(err, data){
+        if (err) return;
+        else {
+          that.setState({attendees_options: data.meetingUsers});
+        }
+      })
   }
 
 
@@ -101,14 +127,13 @@ class AddMeeting extends Component {
     const { classes } = this.props;
 
     const attendees = []; 
-    this.props.attendees.forEach(function(attendee){
+    this.state.attendees_options.forEach(function(attendee){
       attendees.push({id: attendee._id, value: attendee.username, label: attendee.name});
     })
-
     return (
       <div className={classes.container}>
           <Typography variant="display1" style={{color: '#263238', marginBottom: 16}} gutterBottom>
-              Add Meeting
+              Add Next Meeting
           </Typography>
           <div  className={classes.spacing}>
             <DatePicker big dateChange={this.dateChange}/>
@@ -278,7 +303,7 @@ class AddMeeting extends Component {
           />
 
           <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
-              Add Meeting
+              Add Next Meeting
           </Button>
 
 
@@ -294,7 +319,7 @@ class AddMeeting extends Component {
                 {"Meeting Added Successfully"}
               </DialogTitle>
               <DialogActions>
-                <Button onClick={this.handleClose} color="primary">
+                <Button onClick={this.handleDone} color="primary">
                   Done
                 </Button>
               </DialogActions>

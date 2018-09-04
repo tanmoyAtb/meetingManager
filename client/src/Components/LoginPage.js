@@ -38,7 +38,7 @@ class LoginPage extends React.Component {
 
   login = (e) => {
     let that=this;
-    Axios.login(this.state.username, this.state.password, function(err, data){
+    Axios.loginAndGetHomeMeetingsAndUsers(this.state.username, this.state.password, function(err, data){
       if(err) that.setState({msgLogin : err});
       else {
         that.props.loggedIn(data);

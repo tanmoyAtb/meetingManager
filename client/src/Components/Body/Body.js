@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles';
 import DateRadio from './DateRadio';
 import CardBox from '../Card/CardBox';
+
 
 const styles = theme => ({
   container: {
@@ -18,14 +18,26 @@ const styles = theme => ({
 
 
 class Body extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      users: [],
+      meetings: []
+    };
+  }
+
+
+  ComponentDidMount() {
+
+  }
+
 
   render() {
   	const { classes } = this.props;
-
     return (
       <div className={classes.container}>
-        <DateRadio/>
-        <CardBox/>
+        <DateRadio onDateChange = {this.props.onDateChange} users={this.props.users} userChange={this.props.userChange} user={this.props.user}/>
+        <CardBox meetings={this.props.meetings}/>
       </div>
     );
   }

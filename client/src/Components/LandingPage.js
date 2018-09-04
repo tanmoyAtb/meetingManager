@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import Header from './Header/Header';
 import Body from './Body/Body';
 
@@ -9,7 +8,7 @@ class LandingPage extends Component {
     return (
       <div>
         <Header {...this.props}/>
-        <Body/>
+        <Body {...this.props}/>
       </div>
     );
   }

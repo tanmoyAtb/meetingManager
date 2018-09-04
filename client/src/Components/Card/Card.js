@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
+import Helpers from 'Utils/Helpers';
 
 const styles = {
   card: {
@@ -45,34 +44,55 @@ class Layout extends Component {
 
 
   render() {
-    const { classes} = this.props;
+    const { classes, meeting } = this.props;
 
-    let title = "Meeting with Agroni";
-    let date = "02/07/2018";
-    let time = "04:00 PM";
-    let timeStart = "03:00 PM";
-    let timeStop = "05:30 PM";
-    let client = "Agroni Bank";
-    let location = "Paltan, In front Fars, Swopno"
-    let attendees = "Tanmoy, RC, Ratul";
-    let description = "The Quick brown fox jumped over the lazy dog";
-    let summary = "Okay Thats Great";
+    let attendees = "";
+
+    let counter=0;
+    let len = meeting.attendees.length;
+    meeting.attendees.forEach(function(attendee){
+      attendees += attendee.name;
+      counter++;
+      if(counter<len) attendees += ", ";
+    })
 
     return (
       <Card className={classes.card}>
         <CardContent style={{padding: 16}}>
           <div style={{display: 'flex'}}>
-            <div style={{flex: 1}}>
-              <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
-                   {time}
-              </Typography>
-              <Typography variant="display1" style={{color: '#546E7A', marginBottom: 16, fontSize: 14, fontStyle: 'italic'}} >
-                  {timeStart} - {timeStop}
-              </Typography>
-            </div>
-            <Button variant="outlined" size="small" color="primary" >
-              Details
-            </Button>
+            
+              {this.props.showDate &&
+                  <div style={{flex: 1}}>
+                    <div style={{display: 'flex'}}>
+                      <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
+                          {Helpers.format_date(new Date(meeting.date))} 
+                      </Typography>
+                      <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 16}} >
+                           {Helpers.format_time(new Date(meeting.time))} 
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography variant="display1" style={{color: '#546E7A', marginBottom: 30, fontSize: 16, fontStyle: 'italic'}} >
+                          {meeting.time_from && Helpers.format_time(new Date(meeting.time_from))} - {meeting.time_to && Helpers.format_time(new Date(meeting.time_to))} 
+                      </Typography>
+                    </div>
+                  </div>
+              }
+
+              {!this.props.showDate && 
+                <div style={{flex: 1}}>
+                  <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
+                   {Helpers.format_time(new Date(meeting.time))}
+                  </Typography>
+                  <Typography variant="display1" style={{color: '#546E7A', marginBottom: 16, fontSize: 14, fontStyle: 'italic'}} >
+                      {meeting.time_from && Helpers.format_time(new Date(meeting.time_from))} - {meeting.time_to && Helpers.format_time(new Date(meeting.time_to))} 
+                  </Typography>
+                </div>
+              }
+            
+              <Button variant="outlined" size="small" color="primary" href={`/meeting/${meeting._id}`}>
+                Details
+              </Button>
           </div>
           <div>
             
@@ -80,7 +100,7 @@ class Layout extends Component {
 
           <div>
             <Typography variant="display1" style={{color: '#263238', fontSize: 18}} >
-                {title}
+                {meeting.title}
             </Typography>
           </div>
           <div>
@@ -92,12 +112,12 @@ class Layout extends Component {
 
           <div>
             <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
-                {client}
+                {meeting.client}
             </Typography>
           </div>
           <div>
             <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
-                {location}
+                {meeting.location}
             </Typography>
           </div>
           

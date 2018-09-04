@@ -1,9 +1,6 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -26,16 +23,29 @@ const styles = theme =>  ({
 class DatePickerComp extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {
-      dateMoment: moment(),
-      dateDate: new Date(),
-      dateString: moment().format('DD/MM/YYYY'),
-      open: false
-    };
-    this.handleChangeDate = this.handleChangeDate.bind(this);
+
+    const { date } = props;
+
+    if (date) {
+      this.state = {
+        dateMoment: moment(date),
+        dateDate: date,
+        dateString: moment(date).format('DD/MM/YYYY'),
+        open: false
+      };
+    }
+    else {
+      this.state = {
+        dateMoment: moment(),
+        dateDate: new Date(),
+        dateString: moment().format('DD/MM/YYYY'),
+        open: false
+      };
+    }
+    
   }
  
-  handleChangeDate(date) {
+  handleChangeDate = (date) => {
     this.setState({
       dateMoment: date,
       dateDate: date.toDate(),
@@ -71,7 +81,7 @@ class DatePickerComp extends React.Component {
   }
  
   render() {
-    const  { classes, big } = this.props;
+    const  { big } = this.props;
     let bigClass;
     if(big){
       bigClass="bigClass";
