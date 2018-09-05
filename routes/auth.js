@@ -16,7 +16,7 @@ authRouter.route('/login')
       }
       User.checkUser(req.body.username, req.body.password, function(err, user) {
           if (err) {
-            return res.status(403).send({success: false, msg: "server error"});
+            return res.status(403).send({success: false, msg: err});
           }
           else {
             Meeting.getMeetingsOnDate(new Date(), function(err, meetings){
@@ -39,6 +39,30 @@ authRouter.route('/login')
           } 
       });
   });
+
+authRouter.post('/meetingsandusers', passport.authenticate('jwt', { session: false}), function(req, res) {
+  let token = getToken(req.headers);
+  if (token) {
+    Meeting.getMeetingsOnDate(req.body.date, function(err, meetings){
+      if (err) {
+        return res.status(403).send({success: false, authorized: true, msg: err});
+      }
+      else{
+        User.getUserlist(function(err, users){
+          if(err) {
+            return res.status(403).send({success: false, authorized: true, msg: err});
+          }
+          else {
+            return res.json({success: true, authorized: true, users: users, name: req.user.name, username: req.user.username,
+                              meetings: meetings});
+          }
+        })
+      }
+    })
+  } else {
+    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
+  }
+});
 
 authRouter.get('/profile', passport.authenticate('jwt', { session: false}), function(req, res) {
   let token = getToken(req.headers);
@@ -128,26 +152,19 @@ authRouter.get('/meeting', passport.authenticate('jwt', { session: false}), func
   }
 });
 
-authRouter.post('/meetingsandusers', passport.authenticate('jwt', { session: false}), function(req, res) {
+authRouter.get('/allmeetings', passport.authenticate('jwt', { session: false}), function(req, res) {
   let token = getToken(req.headers);
   if (token) {
-    Meeting.getMeetingsOnDate(req.body.date, function(err, meetings){
-      if (err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+    Meeting.getAllMeetings(function(err, meetings){
+      if(err) {
+        return res.status(403).send({success: false, authorized: true, msg: 'Server Error.'});
       }
-      else{
-        User.getUserlist(function(err, users){
-          if(err) {
-            return res.status(403).send({success: false, authorized: true, msg: err});
-          }
-          else {
-            return res.json({success: true, authorized: true, users: users, meetings: meetings});
-          }
-        })
+      else {
+        return res.json({success: true, authorized: true, user: req.user, meetings: meetings});
       }
     })
   } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
+    return res.status(403).send({success: false, authorized: false, msg: 'Unauthorized.'});
   }
 });
 
@@ -160,7 +177,7 @@ authRouter.get('/meeting/:id', passport.authenticate('jwt', { session: false}), 
         return res.status(403).send({success: false, authorized: true, msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, meeting: meeting});
+        return res.json({success: true, authorized: true, name: req.user.name, username: req.user.username, meeting: meeting});
       }
     })
   } else {

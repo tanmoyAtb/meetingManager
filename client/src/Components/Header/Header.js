@@ -7,6 +7,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
 
 import styles from './headerStyle';
 
@@ -70,7 +72,13 @@ class MenuAppBar extends React.Component {
                   open={Boolean(anchorEl)}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+                  <MenuItem onClick={() => this.props.history.push("/meetings")}>Meetings History</MenuItem>
+                  <MenuItem onClick={() => this.props.history.push("/tenders")}>Tender Notices</MenuItem>
+                  <MenuItem onClick={this.handleLogout}>Logout - 
+                      <Typography variant="display1" style={{color: '#263238', fontSize: 12}} >
+                           {" " + this.props.name} 
+                      </Typography>
+                  </MenuItem>
                 </Menu>
               </div>
             

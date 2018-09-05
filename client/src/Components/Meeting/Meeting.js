@@ -28,10 +28,12 @@ class Meeting extends Component {
     this.state = {
       meeting: null,
       open: false,
+      openConfirm: false,
       summary: '',
-      mode: 'wait'
+      mode: 'wait',
+      name: '',
+      username: ''
     };
-
   }
 
   summaryChange = (e) => {
@@ -51,6 +53,22 @@ class Meeting extends Component {
 
   handleClose = () => {
     this.setState({ open: false });
+  };
+
+  handleCloseConfirm = () => {
+    this.setState({ openConfirm: false });
+  }
+
+  handleYesConfirm = () => {
+    let that=this;
+    Axios.deleteOneMeeting(this.props.match.params.id, function(err){
+      if(err) {
+        console.log(err);
+      }
+      else {
+        that.props.history.push("/");
+      }
+    })
   };
 
   handleDone = () => {
@@ -114,15 +132,7 @@ class Meeting extends Component {
   }
 
   deleteMeeting = () => {
-    let that=this;
-    Axios.deleteOneMeeting(this.props.match.params.id, function(err){
-      if(err) {
-        console.log(err);
-      }
-      else {
-        that.props.history.push("/");
-      }
-    })
+    this.setState({ openConfirm: true });
   }
 
   componentDidMount() {
@@ -134,7 +144,7 @@ class Meeting extends Component {
         }
         else {
           if(data.meeting && data.meeting._id){
-            that.setState({mode: 'details', meeting: data.meeting});
+            that.setState({mode: 'details', name: data.name, username: data.username, meeting: data.meeting});
           }
         }
       })
@@ -144,6 +154,8 @@ class Meeting extends Component {
   render() {
     const { classes } = this.props;
     const { mode, meeting } = this.state;
+
+
     if(mode === 'wait'){
       return (
           <Loader/>
@@ -162,7 +174,7 @@ class Meeting extends Component {
 
       return (
         <div >
-          <Header logout={this.handleLogout}/>
+          <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
           <div className={classes.container}>
             <div style={{display: 'flex'}}>
               <div style={{flex: 1}}>
@@ -365,7 +377,27 @@ class Meeting extends Component {
                 </DialogActions>
               </Dialog>
 
-
+              <Dialog
+                open={this.state.openConfirm}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={this.handleCloseConfirm}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+                PaperProps={{style: {flex: 1}}}
+              >
+                <DialogTitle id="alert-dialog-slide-title">
+                  {"Are You Sure"}
+                </DialogTitle>
+                <DialogActions>
+                  <Button onClick={this.handleYesConfirm} color="primary">
+                    Yes
+                  </Button>
+                  <Button onClick={this.handleCloseConfirm} color="primary">
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </Dialog>
 
             </div>
           </div>
@@ -375,7 +407,7 @@ class Meeting extends Component {
     else if(mode === 'edit' && meeting) {
       return (
           <div>
-            <Header logout={this.handleLogout}/>
+            <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
             <div className={classes.container}>
               <Button variant="outlined" onClick={this.handleShowDetails} color="primary">
                 Cancel
@@ -388,7 +420,7 @@ class Meeting extends Component {
     else if(mode === 'addNextMeeting' && meeting){
       return (
           <div>
-            <Header logout={this.handleLogout}/>
+            <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
             <div className={classes.container}>
               <Button variant="outlined" onClick={this.handleShowDetails} color="primary" style={{marginBottom: 16}}>
                 Cancel
@@ -407,7 +439,7 @@ class Meeting extends Component {
     else {
       return (
           <div>
-            <Header logout={this.handleLogout}/>
+            <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
           </div>
         )
     }

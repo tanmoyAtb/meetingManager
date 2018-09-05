@@ -39,7 +39,7 @@ componentDidMount() {
 
     if (this.state.logged === 'loggedin'){
       template = <div>
-                    <AddHeader {...this.props} logout={this.handleLogout}/>
+                    <AddHeader {...this.props} logout={this.handleLogout} name={this.state.name}/>
                     <AddMeeting attendees={this.state.attendees}/>
                   </div>
     }

@@ -103,13 +103,28 @@ MeetingSchema.statics.insertMeeting = function(data, user, cb) {
             newAttendees.push({id: attendee.id, name: attendee.label, username: attendee.value});
         })
 
+        let date = new Date(data.date);
+        date.setHours(0,0,0,0);
+
         let time = new Date(data.time);
         time.setFullYear(1970, 0, 1);
 
-        newMeeting.date = data.date;
+        let time_from; 
+        if(data.time_from) {
+            time_from= new Date(data.time_from);
+            time_from.setFullYear(1970, 0, 1);
+        }
+
+        let time_to;
+        if(data.time_to) {
+            time_to= new Date(data.time_to);
+            time_to.setFullYear(1970, 0, 1);
+        }
+
+        newMeeting.date = date;
         newMeeting.time = time;
-        newMeeting.time_from = data.time_from;
-        newMeeting.time_to = data.time_to;
+        newMeeting.time_from = time_from;
+        newMeeting.time_to = time_to;
         newMeeting.title = data.title;
         newMeeting.client = data.client;
         newMeeting.location = data.location;
@@ -118,8 +133,10 @@ MeetingSchema.statics.insertMeeting = function(data, user, cb) {
         newMeeting.created_by = user;
 
         newMeeting.save(function(err, meeting) {
-            if (err)
+            if (err){
+                console.log(err);
                 cb(err, null);
+            }
             else{
                 cb(null, meeting);
             }
@@ -142,13 +159,29 @@ MeetingSchema.statics.insertNextMeeting = function(prevMeeting, data, user, cb) 
             newAttendees.push({id: attendee.id, name: attendee.label, username: attendee.value});
         })
 
+        
+        let date = new Date(data.date);
+        date.setHours(0,0,0,0);
+
         let time = new Date(data.time);
         time.setFullYear(1970, 0, 1);
 
-        newMeeting.date = data.date;
+        let time_from; 
+        if(data.time_from) {
+            time_from= new Date(data.time_from);
+            time_from.setFullYear(1970, 0, 1);
+        }
+
+        let time_to;
+        if(data.time_to) {
+            time_to= new Date(data.time_to);
+            time_to.setFullYear(1970, 0, 1);
+        }
+
+        newMeeting.date = date;
         newMeeting.time = time;
-        newMeeting.time_from = data.time_from;
-        newMeeting.time_to = data.time_to;
+        newMeeting.time_from = time_from;
+        newMeeting.time_to = time_to;
         newMeeting.title = data.title;
         newMeeting.client = data.client;
         newMeeting.location = data.location;
@@ -273,6 +306,32 @@ MeetingSchema.statics.getMeetingOnId = function(id, cb) {
         }
 
     })
+    
+};
+
+MeetingSchema.statics.getAllMeetings = function(cb) {
+
+    this.aggregate([
+        {
+            $sort : {
+                time: -1
+            }
+        },
+        {
+            $group: {
+              _id: "$date",
+              entries: { $push: "$$ROOT" }
+            }
+        }
+    ], function (err, meetings) {
+        if (err) {
+            console.log(err);
+            cb(err, null);
+        }
+        else {
+            cb(null, meetings);
+        }
+    });
     
 };
 
