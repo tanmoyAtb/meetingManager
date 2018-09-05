@@ -29,6 +29,37 @@ class Axios {
 	             		localStorage.removeItem('jwtToken');
 	             		localStorage.removeItem('name');
 	             		localStorage.removeItem('username');
+	             		callback(error.response.data.msg, null);
+	             	}
+	             	else{
+	             		callback(error.response.data.msg, null);
+	             	}
+	             }
+	             else {
+	             	callback("Inknown error", null);
+	             }
+	          });
+	    }
+	    else {
+	      callback("Fill Up all details", null);
+	    }
+	}
+
+	getHomeMeetingsAndUsers(date, callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      
+	        axios.post(url + '/auth/meetingsandusers', { date: date })
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	          	console.log(error.response);
+	             if(error.response && error.response.data){
+	             	if(!error.response.data.authorized){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
 	             		callback('unauthorized server', null);
 	             	}
 	             	else{
@@ -39,9 +70,10 @@ class Axios {
 	             	callback(error, null);
 	             }
 	          });
+	          
 	    }
 	    else {
-	      callback("Fill Up all details", null);
+	        callback('unauthorized local', null);
 	    }
 	}
 
@@ -89,6 +121,38 @@ class Axios {
 	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
 	      
 	        axios.get(url + '/auth/meeting')
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	          	console.log(error.response);
+	             if(error.response && error.response.data){
+	             	if(!error.response.data.authorized){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		callback('server error', null);
+	             	}
+	             }
+	             else {
+	             	callback(error, null);
+	             }
+	          });
+	          
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+
+	getAllMeetings(callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      
+	        axios.get(url + '/auth/allmeetings')
 	          .then(res => {
 	            callback(null, res.data);
 	          })
@@ -210,38 +274,6 @@ class Axios {
 	      else {
 	        callback('unauthorized', null);
 	      }
-	}
-
-	getHomeMeetingsAndUsers(date, callback){
-		if(localStorage.getItem('jwtToken')){
-	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-	      
-	        axios.post(url + '/auth/meetingsandusers', { date: date })
-	          .then(res => {
-	            callback(null, res.data);
-	          })
-	          .catch((error) => {
-	          	console.log(error.response);
-	             if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
-	             		localStorage.removeItem('jwtToken');
-	             		localStorage.removeItem('name');
-	             		localStorage.removeItem('username');
-	             		callback('unauthorized server', null);
-	             	}
-	             	else{
-	             		callback('server error', null);
-	             	}
-	             }
-	             else {
-	             	callback(error, null);
-	             }
-	          });
-	          
-	    }
-	    else {
-	        callback('unauthorized local', null);
-	    }
 	}
 
 

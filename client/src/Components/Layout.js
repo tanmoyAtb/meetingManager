@@ -85,7 +85,7 @@ class Layout extends Component {
     let template = <Loader />;
 
     if(this.state.logged === 'loggedin'){
-      template = <LandingPage {...this.props} onDateChange={this.onDateChange} users={this.state.users} 
+      template = <LandingPage {...this.props} onDateChange={this.onDateChange} users={this.state.users} name={this.state.name}
                     meetings={this.state.filteredMeetings} userChange={this.userChange} logout={this.handleLogout} user={this.state.user}/>
     }
     else if(this.state.logged === 'login') {
