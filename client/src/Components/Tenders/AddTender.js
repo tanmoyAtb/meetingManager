@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import DatePicker from '../DatePicker/DatePicker';
-import styles from './addMeetingStyle.js';
+import DateTimePicker from '../DatePicker/DateTimePicker';
+import styles from './addTenderStyle.js';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -23,14 +23,9 @@ class AddMeeting extends Component {
             rtl: true,
             attendees: [],
             date: new Date(),
-            time: '',
-            time_from: '',
-            time_to: '',
             client: '',
-            title: '',
-            location: '',
-            description: '',
-            summary: '',
+            work: '',
+            note: '',
             attendees_options: []
         };
 
@@ -56,35 +51,15 @@ class AddMeeting extends Component {
     this.setState({date: date});
   }
 
-  timeChange = (e) => {
-    this.setState({time: moment(e.target.value, 'HH:mm').toDate()});
-  }
-
-  timeFromChange = (e) => {
-    this.setState({time_from: moment(e.target.value, 'HH:mm').toDate()});
-  }
-
-  timeToChange = (e) => {
-    this.setState({time_to: moment(e.target.value, 'HH:mm').toDate()});
-  }
-
-  titleChange = (e) => {
-    this.setState({title: e.target.value});
-  }
-
   clientChange = (e) => {
     this.setState({client: e.target.value});
   }
 
-  locationChange = (e) => {
-    this.setState({location: e.target.value});
-  }
-
-  descriptionChange = (e) => {
+  workChange = (e) => {
     this.setState({description: e.target.value});
   }
 
-  summaryChange = (e) => {
+  noteChange = (e) => {
     this.setState({summary: e.target.value});
   }
 
@@ -131,93 +106,25 @@ class AddMeeting extends Component {
       attendees.push({id: attendee._id, value: attendee.username, label: attendee.name});
     })
     return (
-      <div className={classes.container}>
+      <div style={{display: 'flex', flexFlow: 'column'}}>
           <Typography variant="display1" style={{color: '#263238', marginBottom: 16}} gutterBottom>
-              Add Next Meeting
+              Add Tender 
           </Typography>
           <div  className={classes.spacing}>
-            <DatePicker big dateChange={this.dateChange}/>
+            <DateTimePicker big label="Published Date" dateChange={this.dateChange}/>
           </div>
 
-          <TextField
-            id="time"
-            label="Time"
-            type="time"
-            required
-            onChange={this.timeChange}
-            className={classes.spacing}
-            InputLabelProps={{
-              FormLabelClasses: {
-                root: classes.label,
-              },
-              shrink: true,
-              focused: false
-            }}
-            inputProps={{
-              step: 300, 
-              style: {marginTop: 8}
-            }}
-            style={{maxWidth: 600}}
-          />
-
-          <div style={{display: 'flex'}}  className={classes.spacing}>
-            <TextField
-              id="time"
-              label="Time From"
-              type="time"
-              onChange={this.timeFromChange}
-              InputLabelProps={{
-                FormLabelClasses: {
-                  root: classes.label,
-                },
-                shrink: true,
-                focused: false
-              }}
-              inputProps={{
-                step: 300, 
-                style: {marginTop: 8}
-              }}
-              style={{marginRight: 16, flex: 1, maxWidth: 292}}
-            />
-            <TextField
-              id="time"
-              label="Time To"
-              type="time"
-              onChange={this.timeToChange}
-              InputLabelProps={{
-                FormLabelClasses: {
-                  root: classes.label,
-                },
-                shrink: true,
-                focused: false
-              }}
-              inputProps={{
-                step: 300, 
-                style: {marginTop: 8}
-              }}
-              style={{flex: 1, maxWidth: 292}}
-            />
+          <div  className={classes.spacing}>
+            <DateTimePicker big label="Last Date" dateChange={this.dateChange}/>
           </div>
 
-          <TextField
-            label="Title"
-            required
-            className={classes.spacing}
-            onChange={this.titleChange}
-            InputLabelProps={{
-              FormLabelClasses: {
-                root: classes.label,
-              },
-              shrink: true,
-              focused: false
-            }}
-            inputProps={{
-                step: 300, 
-                style: {marginTop: 8}
-              }}
-            placeholder="Title"
-            style={{maxWidth: 600}}
-          />
+          <div  className={classes.spacing}>
+            <DateTimePicker big label="Dropping Date" dateChange={this.dateChange}/>
+          </div>
+
+          <div  className={classes.spacing}>
+            <DateTimePicker big label="Opening Date" dateChange={this.dateChange}/>
+          </div>
 
           <TextField
             label="Client"
@@ -239,48 +146,10 @@ class AddMeeting extends Component {
             style={{maxWidth: 600}}
           />
 
-           <TextField
-            label="Location"
-            required
-            onChange={this.locationChange}
-            className={classes.spacing}
-            InputLabelProps={{
-              FormLabelClasses: {
-                root: classes.label,
-              },
-              shrink: true,
-              focused: false
-            }}
-            inputProps={{
-                step: 300, 
-                style: {marginTop: 8}
-              }}
-            placeholder="Location"
-            style={{maxWidth: 600}}
-          />
-
-          <div className={classes.spacing} style={{maxWidth: 600}}>
-            <label className={classes.label} style={{fontFamily: 'Helvetica', fontSize: 22}} htmlFor="Attendees">Attendees</label>
-            <div style={{marginTop: 28}}>
-              <Select
-                  id="Attendees"
-                  isMulti
-                  onChange={this.meetingUserChange}
-                  options={attendees}
-                  placeholder="Select Attendee"
-                  rtl={this.state.rtl}
-                  simpleValue
-                  value={this.state.attendees}
-                  
-              />
-            </div>
-          </div>
-
-
           <TextField
             id="multiline-static"
-            label="Description"
-            onChange={this.descriptionChange}
+            label="Work"
+            onChange={this.workChange}
             multiline
             rows="4"
             rowsMax="10"
@@ -298,13 +167,87 @@ class AddMeeting extends Component {
             className={classes.spacing}
             defaultValue=""
             margin="normal"
-            placeholder="Description"
+            placeholder="Work"
             style={{maxWidth: 600}}
           />
 
-          <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
-              Add Next Meeting
-          </Button>
+          <TextField
+            id="multiline-static"
+            label="Note"
+            onChange={this.noteChange}
+            multiline
+            rows="4"
+            rowsMax="10"
+            InputLabelProps={{
+              FormLabelClasses: {
+                root: classes.label,
+              },
+              shrink: true,
+              focused: false
+            }}
+            inputProps={{
+                step: 300, 
+                style: {marginTop: 8}
+              }}
+            className={classes.spacing}
+            defaultValue=""
+            margin="normal"
+            placeholder="Note"
+            style={{maxWidth: 600}}
+          />
+          <div style={{display: 'flex'}}>
+            <TextField
+              label="Schedule Money"
+              required
+              type="number"
+              onChange={this.clientChange}
+              className={classes.spacing}
+              InputLabelProps={{
+                FormLabelClasses: {
+                  root: classes.label,
+                },
+                shrink: true,
+                focused: false
+              }}
+              inputProps={{
+                  step: 300, 
+                  style: {marginTop: 8}
+                }}
+              placeholder="Client"
+              style={{maxWidth: 292, flex: 1}}
+            />
+
+            <TextField
+              label="Security Money"
+              required
+              type="number"
+              onChange={this.clientChange}
+              className={classes.spacing}
+              InputLabelProps={{
+                FormLabelClasses: {
+                  root: classes.label,
+                },
+                shrink: true,
+                focused: false
+              }}
+              inputProps={{
+                  step: 300, 
+                  style: {marginTop: 8}
+                }}
+              placeholder="Client"
+              style={{maxWidth: 292, marginLeft: 16, flex: 1}}
+            />
+          </div>
+
+
+          <div style={{display: 'flex'}}>
+            <Button variant="contained" style= {{maxWidth: 220, marginRight: 16, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
+                Add Tender
+            </Button>
+            <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.props.closeAddTender} color="primary" className={classes.spacing}>
+                Cancel
+            </Button>
+          </div>
 
 
           <Dialog

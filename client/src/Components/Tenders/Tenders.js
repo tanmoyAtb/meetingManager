@@ -14,6 +14,8 @@ import Helpers from 'Utils/Helpers';
 import Loader from 'Components/Loader/Loader';
 import Card from '../Card/Card';
 
+import AddTender from './AddTender';
+
 import styles from './tendersStyle';
 
 function Transition(props) {
@@ -24,14 +26,19 @@ class Meeting extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      meeting: null,
-      open: false,
-      openConfirm: false,
-      summary: '',
       mode: 'wait',
       name: '',
-      username: ''
+      username: '',
+      showAddTender: true
     };
+  }
+
+  addTender = (e) => {
+    this.setState({showAddTender: true});
+  }
+
+  closeAddTender = (e) => {
+    this.setState({showAddTender: false});
   }
 
   componentDidMount() {
@@ -53,7 +60,18 @@ class Meeting extends Component {
       return (
         <div >
           <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
-          
+          <div className={classes.container}>
+            {!this.state.showAddTender && 
+              <Button variant="contained" onClick={this.addTender} color="primary" className={classes.spacing}>
+                Add Tender Notice
+              </Button>
+            }
+            
+            {this.state.showAddTender &&
+              <AddTender closeAddTender={this.closeAddTender}/>
+
+            }
+          </div>
         </div>
       );
   }

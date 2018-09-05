@@ -42,8 +42,8 @@ label {
   padding: 8px 10px;
   box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
   color : black;
-  min-width: 140px;
-  max-width: 200px;
+  min-width: 100px;
+  max-width: 100px;
 }
 
 .myDateSmall:focus { 
@@ -76,6 +76,7 @@ label {
 .bigClass {
   font-size: 22px;
   color: #263238;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  margin-top: 2px;
   font-family: Helvetica;
 }

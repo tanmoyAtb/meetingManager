@@ -422,7 +422,7 @@ class Meeting extends Component {
           <div>
             <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
             <div className={classes.container}>
-              <Button variant="outlined" onClick={this.handleShowDetails} color="primary" style={{marginBottom: 16}}>
+              <Button variant="contained" onClick={this.handleShowDetails} color="primary" style={{marginBottom: 16, maxWidth: 220}}>
                 Cancel
               </Button>
               <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
