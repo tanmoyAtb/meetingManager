@@ -9,9 +9,9 @@ mongoose.connect(config.dbUrl, { useMongoClient: true } )
     .then(() => { // if all is ok we will be here
         console.log('Db initialized');
 
-        newUser.name = "Shuvra";
-		newUser.username = "s";
-		newUser.password = "s";
+        newUser.name = "Jakir";
+		newUser.username = "jakir";
+		newUser.password = "jakir";
 
 		console.log(newUser);
 
