@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import DatePicker from '../DatePicker/DatePicker';
+import DateTimePicker from '../DatePicker/DateTimePicker';
 import styles from './addMeetingStyle.js';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -27,11 +27,11 @@ class EditMeeting extends Component {
           open: false,
           rtl: true,
           attendees: attendees,
-          date: new Date(meeting.date),
-          time: new Date(meeting.time),
-          time_from: new Date(meeting.time_from),
-          time_to: new Date(meeting.time_to),
+          datetime: new Date(meeting.datetime),
+          datetime_from: new Date(meeting.datetime_from),
+          datetime_to: new Date(meeting.datetime_to),
           client: meeting.client,
+          organization: meeting.organization,
           title: meeting.title,
           location: meeting.location,
           description: meeting.description,
@@ -56,19 +56,16 @@ class EditMeeting extends Component {
   }
 
   dateChange = (date) => {
-    this.setState({date: date});
-  }
-
-  timeChange = (e) => {
-    this.setState({time: moment(e.target.value, 'HH:mm').toDate()});
+    console.log(date);
+    this.setState({datetime: date});
   }
 
   timeFromChange = (e) => {
-    this.setState({time_from: moment(e.target.value, 'HH:mm').toDate()});
+    this.setState({datetime_from: moment(e.target.value, 'HH:mm').toDate()});
   }
 
   timeToChange = (e) => {
-    this.setState({time_to: moment(e.target.value, 'HH:mm').toDate()});
+    this.setState({datetime_to: moment(e.target.value, 'HH:mm').toDate()});
   }
 
   titleChange = (e) => {
@@ -77,6 +74,10 @@ class EditMeeting extends Component {
 
   clientChange = (e) => {
     this.setState({client: e.target.value});
+  }
+
+  organizationChange = (e) => {
+    this.setState({organization: e.target.value});
   }
 
   locationChange = (e) => {
@@ -93,17 +94,17 @@ class EditMeeting extends Component {
 
   editMeeting = (e) => {
     const states = this.state;
-    if(states.date && states.time && states.title && states.client && states.location && states.attendees.length && states.description){
+    if(states.datetime && states.title && states.client && states.location && states.attendees.length && states.description){
        this.props.onEditMeeting(states);
     }
   }
 
   componentDidMount() {
       let that=this;
-      Axios.getMeeting(function(err, data){
+      Axios.getUsersList(function(err, data){
         if (err) return;
         else {
-          that.setState({attendees_options: data.meetingUsers});
+          that.setState({attendees_options: data.users});
         }
       })
   }
@@ -123,37 +124,16 @@ class EditMeeting extends Component {
               Edit Meeting
           </Typography>
           <div  className={classes.spacing}>
-            <DatePicker big dateChange={this.dateChange} date={this.state.date}/>
+            <DateTimePicker big dateTimeChange={this.dateChange} date={this.state.datetime} time={this.state.datetime}/>
           </div>
 
-          <TextField
-            id="time"
-            label="Time"
-            type="time"
-            required
-            defaultValue={Helpers.format_time_string(new Date(this.props.meeting.time))}
-            onChange={this.timeChange}
-            className={classes.spacing}
-            InputLabelProps={{
-              FormLabelClasses: {
-                root: classes.label,
-              },
-              shrink: true,
-              focused: false
-            }}
-            inputProps={{
-                step: 300, 
-                style: {marginTop: 8}
-              }}
-            style={{maxWidth: 600}}
-          />
 
           <div style={{display: 'flex'}}  className={classes.spacing}>
             <TextField
               id="time"
               label="Time From"
               type="time"
-              defaultValue={this.props.meeting.time_from && Helpers.format_time_string(new Date(this.props.meeting.time_from))}
+              defaultValue={this.props.meeting.datetime_from && Helpers.format_time_string(new Date(this.props.meeting.datetime_from))}
               onChange={this.timeFromChange}
               InputLabelProps={{
                 FormLabelClasses: {
@@ -172,7 +152,7 @@ class EditMeeting extends Component {
               id="time"
               label="Time To"
               type="time"
-              defaultValue={this.props.meeting.time_to && Helpers.format_time_string(new Date(this.props.meeting.time_to))}
+              defaultValue={this.props.meeting.datetime_to && Helpers.format_time_string(new Date(this.props.meeting.datetime_to))}
               onChange={this.timeToChange}
               InputLabelProps={{
                 FormLabelClasses: {
@@ -228,6 +208,27 @@ class EditMeeting extends Component {
                 style: {marginTop: 8}
               }}
             placeholder="Client"
+            style={{maxWidth: 600}}
+          />
+
+          <TextField
+            label="Organization"
+            required
+            defaultValue={this.props.meeting.organization}
+            onChange={this.organizationChange}
+            className={classes.spacing}
+            InputLabelProps={{
+              FormLabelClasses: {
+                root: classes.label,
+              },
+              shrink: true,
+              focused: false
+            }}
+            inputProps={{
+                step: 300, 
+                style: {marginTop: 8}
+              }}
+            placeholder="Organization"
             style={{maxWidth: 600}}
           />
 

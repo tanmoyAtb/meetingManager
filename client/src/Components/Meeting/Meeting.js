@@ -118,6 +118,7 @@ class Meeting extends Component {
 
   onEditMeeting = (data) => {
     let that= this;
+    console.log(data);
     Axios.editMeeting(this.props.match.params.id, data, function(err, data){
        if (err) {
           console.log(err);
@@ -155,6 +156,7 @@ class Meeting extends Component {
     const { classes } = this.props;
     const { mode, meeting } = this.state;
 
+    console.log(meeting);
 
     if(mode === 'wait'){
       return (
@@ -226,15 +228,15 @@ class Meeting extends Component {
 
               <div style={{display: 'flex'}}>
                 <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
-                    {Helpers.format_date(new Date(meeting.date))} 
+                    {Helpers.format_date(new Date(meeting.datetime))} 
                 </Typography>
                 <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 16}} >
-                     {Helpers.format_time(new Date(meeting.time))} 
+                     {Helpers.format_time(new Date(meeting.datetime))} 
                 </Typography>
               </div>
               <div>
                 <Typography variant="display1" style={{color: '#546E7A', marginBottom: 30, fontSize: 16, fontStyle: 'italic'}} >
-                    {meeting.time_from && Helpers.format_time(new Date(meeting.time_from))} - {meeting.time_to && Helpers.format_time(new Date(meeting.time_to))} 
+                    {meeting.datetime_from && Helpers.format_time(new Date(meeting.datetime_from))} - {meeting.datetime_to && Helpers.format_time(new Date(meeting.datetime_to))} 
                 </Typography>
               </div>
 
@@ -245,6 +247,14 @@ class Meeting extends Component {
                 </Typography>
                 <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
                     {meeting.client}
+                </Typography>
+              </div>
+              <div>
+                <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
+                    Organization : 
+                </Typography>
+                <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
+                    {meeting.organization}
                 </Typography>
               </div>
               <div>

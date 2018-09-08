@@ -65,10 +65,10 @@ class Layout extends Component {
                   <div style={{flex: 1}}>
                     <div style={{display: 'flex'}}>
                       <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
-                          {Helpers.format_date(new Date(meeting.date))} 
+                          {Helpers.format_date(new Date(meeting.datetime))} 
                       </Typography>
                       <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 16}} >
-                           {Helpers.format_time(new Date(meeting.time))} 
+                           {Helpers.format_time(new Date(meeting.datetime))} 
                       </Typography>
                     </div>
                     <div>
@@ -82,7 +82,7 @@ class Layout extends Component {
               {!this.props.showDate && 
                 <div style={{flex: 1}}>
                   <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
-                   {Helpers.format_time(new Date(meeting.time))}
+                   {Helpers.format_time(new Date(meeting.datetime))}
                   </Typography>
                   <Typography variant="display1" style={{color: '#546E7A', marginBottom: 16, fontSize: 14, fontStyle: 'italic'}} >
                       {meeting.time_from && Helpers.format_time(new Date(meeting.time_from))} - {meeting.time_to && Helpers.format_time(new Date(meeting.time_to))} 

@@ -15,40 +15,50 @@ import moment from 'moment';
 
 import Axios from 'Utils/Axios';
 
-class AddMeeting extends Component {
+class AddTender extends Component {
   constructor(props) {
-        super(props);
-        this.state = {
-            open: false,
-            rtl: true,
-            attendees: [],
-            date: new Date(),
-            client: '',
-            work: '',
-            note: '',
-            attendees_options: []
-        };
-
+    super(props);
+    this.state = {
+      open: false,
+      dateTimePublished: new Date(),
+      dateTimeLast: new Date(),
+      dateTimeDropping: new Date(),
+      dateTimeOpening: new Date(),
+      client: '',
+      work: '',
+      note: '',
+      scheduleMoney: '',
+      securityMoney: '',
+      link: ''
+    };
   }
 
-  handleClickOpen = () => {
+  handleClickOpen = (e) => {
     this.setState({ open: true });
-  };
+  }
 
-  handleClose = () => {
+  handleClose = (e) => {
     this.setState({ open: false });
-  };
-
-  handleDone = () => {
-    this.props.history.push("/");
   }
 
-  meetingUserChange = (selectedOption) => {
-        this.setState({attendees: selectedOption});
+  handleDone = (e) => {
+    this.handleClose();
   }
 
-  dateChange = (date) => {
-    this.setState({date: date});
+  dateTimePublishedChange = (date) => {
+    this.setState({dateTimePublished: date});
+  }
+
+  dateTimeLastChange = (date) => {
+    this.setState({dateTimeLast: date});
+  }
+
+  dateTimeDroppingChange = (date) => {
+    this.setState({dateTimeDropping: date});
+  }
+
+  dateTimeOpeningChange = (date) => {
+    this.setState({dateTimeOpening: date});
   }
 
   clientChange = (e) => {
@@ -56,74 +66,71 @@ class AddMeeting extends Component {
   }
 
   workChange = (e) => {
-    this.setState({description: e.target.value});
+    this.setState({work: e.target.value});
   }
 
   noteChange = (e) => {
-    this.setState({summary: e.target.value});
+    this.setState({note: e.target.value});
   }
 
-  addMeeting = (e) => {
+  scheduleMoneyChange = (e) => {
+    this.setState({scheduleMoney: parseInt(e.target.value)});
+  }
+
+  securityMoneyChange = (e) => {
+    this.setState({securityMoney: parseInt(e.target.value)});
+  }
+
+  linkChange = (e) => {
+    this.setState({link: e.target.value});
+  }
+
+  addTender = (e) => {
     const states = this.state;
     let that = this;
-    if(states.date && states.time && states.title && states.client && states.location && states.attendees.length && states.description){
-      console.log(states);
-      let prevMeeting = {
-        id: this.props.meeting._id,
-        date: new Date(this.props.meeting.date),
-        title: this.props.meeting.title,
-        client: this.props.meeting.client
-      };
+    if(states.dateTimePublished && states.dateTimeLast && states.dateTimeDropping && states.dateTimeOpening 
+        && states.client && states.work && states.note && states.scheduleMoney && states.securityMoney && states.link){
 
-      Axios.postNextMeeting(prevMeeting, states, function(err, meeting){
+      Axios.postTender(states, function(err, tender){
         if(err){
           console.log(err);
             if(err === 'unauthorized') that.props.history.push("/");
         }
         else {
           that.handleClickOpen();
+          that.props.gotNewTender(tender);
         }
       })
     }
   }
 
   componentDidMount() {
-      let that=this;
-      Axios.getMeeting(function(err, data){
-        if (err) return;
-        else {
-          that.setState({attendees_options: data.meetingUsers});
-        }
-      })
+
   }
 
 
   render() {
     const { classes } = this.props;
 
-    const attendees = []; 
-    this.state.attendees_options.forEach(function(attendee){
-      attendees.push({id: attendee._id, value: attendee.username, label: attendee.name});
-    })
     return (
-      <div style={{display: 'flex', flexFlow: 'column'}}>
+      <div style={{display: 'flex', flexFlow: 'column', marginTop: 24}}>
           <Typography variant="display1" style={{color: '#263238', marginBottom: 16}} gutterBottom>
               Add Tender 
           </Typography>
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Published Date" dateChange={this.dateChange}/>
+            <DateTimePicker big label="Published Date" dateTimeChange={this.dateTimePublishedChange}/>
           </div>
 
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Last Date" dateChange={this.dateChange}/>
+            <DateTimePicker big label="Last Date" dateTimeChange={this.dateTimeLastChange}/>
           </div>
 
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Dropping Date" dateChange={this.dateChange}/>
+            <DateTimePicker big label="Dropping Date" dateTimeChange={this.dateTimeDroppingChange}/>
           </div>
 
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Opening Date" dateChange={this.dateChange}/>
+            <DateTimePicker big label="Opening Date" dateTimeChange={this.dateTimeOpeningChange}/>
           </div>
 
           <TextField
@@ -195,12 +202,13 @@ class AddMeeting extends Component {
             placeholder="Note"
             style={{maxWidth: 600}}
           />
+
           <div style={{display: 'flex'}}>
             <TextField
               label="Schedule Money"
               required
               type="number"
-              onChange={this.clientChange}
+              onChange={this.scheduleMoneyChange}
               className={classes.spacing}
               InputLabelProps={{
                 FormLabelClasses: {
@@ -213,7 +221,7 @@ class AddMeeting extends Component {
                   step: 300, 
                   style: {marginTop: 8}
                 }}
-              placeholder="Client"
+              placeholder="Schedule Money"
               style={{maxWidth: 292, flex: 1}}
             />
 
@@ -221,7 +229,7 @@ class AddMeeting extends Component {
               label="Security Money"
               required
               type="number"
-              onChange={this.clientChange}
+              onChange={this.securityMoneyChange}
               className={classes.spacing}
               InputLabelProps={{
                 FormLabelClasses: {
@@ -234,18 +242,34 @@ class AddMeeting extends Component {
                   step: 300, 
                   style: {marginTop: 8}
                 }}
-              placeholder="Client"
+              placeholder="Security Money"
               style={{maxWidth: 292, marginLeft: 16, flex: 1}}
             />
           </div>
+          <TextField
+            label="Link"
+            required
+            onChange={this.linkChange}
+            className={classes.spacing}
+            InputLabelProps={{
+              FormLabelClasses: {
+                root: classes.label,
+              },
+              shrink: true,
+              focused: false
+            }}
+            inputProps={{
+                step: 300, 
+                style: {marginTop: 8}
+              }}
+            placeholder="Link"
+            style={{maxWidth: 600}}
+          />
 
 
           <div style={{display: 'flex'}}>
-            <Button variant="contained" style= {{maxWidth: 220, marginRight: 16, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
+            <Button variant="contained" style= {{maxWidth: 220, marginRight: 16, marginBottom: 240}} onClick={this.addTender} color="primary" className={classes.spacing}>
                 Add Tender
-            </Button>
-            <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.props.closeAddTender} color="primary" className={classes.spacing}>
-                Cancel
             </Button>
           </div>
 
@@ -259,7 +283,7 @@ class AddMeeting extends Component {
               PaperProps={{style: {flex: 1}}}
             >
               <DialogTitle id="alert-dialog-slide-title">
-                {"Meeting Added Successfully"}
+                {"Tender Added Successfully"}
               </DialogTitle>
               <DialogActions>
                 <Button onClick={this.handleDone} color="primary">
@@ -273,4 +297,4 @@ class AddMeeting extends Component {
   }
 }
 
-export default withStyles(styles)(AddMeeting);
+export default withStyles(styles)(AddTender);

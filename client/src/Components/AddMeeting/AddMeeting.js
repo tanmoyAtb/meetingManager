@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import DatePicker from '../DatePicker/DatePicker';
+import DateTimePicker from '../DatePicker/DateTimePicker';
 import styles from './addMeetingStyle.js';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -22,11 +22,11 @@ class AddMeeting extends Component {
             open: false,
             rtl: true,
             attendees: [],
-            date: new Date(),
-            time: '',
-            time_from: '',
-            time_to: '',
+            datetime: null,
+            datetime_from: null,
+            datetime_to: null,
             client: '',
+            organization: '',
             title: '',
             location: '',
             description: '',
@@ -37,30 +37,33 @@ class AddMeeting extends Component {
 
   handleClickOpen = () => {
     this.setState({ open: true });
-  };
+  }
 
   handleClose = () => {
     this.setState({ open: false });
-  };
+  }
 
   meetingUserChange = (selectedOption) => {
-        this.setState({attendees: selectedOption});
+    this.setState({attendees: selectedOption});
   }
 
-  dateChange = (date) => {
-    this.setState({date: date});
-  }
-
-  timeChange = (e) => {
-    this.setState({time: moment(e.target.value, 'HH:mm').toDate()});
+  dateTimeChange = (datetime) => {
+    console.log(datetime);
+    this.setState({datetime: datetime});
   }
 
   timeFromChange = (e) => {
-    this.setState({time_from: moment(e.target.value, 'HH:mm').toDate()});
+    let time = moment(e.target.value, 'HH:mm');
+    if(time.isValid()){
+      this.setState({time_from: time.toDate()});
+    }
   }
 
   timeToChange = (e) => {
-    this.setState({time_to: moment(e.target.value, 'HH:mm').toDate()});
+    let time = moment(e.target.value, 'HH:mm');
+    if(time.isValid()){
+      this.setState({time_to: time.toDate()});
+    }
   }
 
   titleChange = (e) => {
@@ -69,6 +72,10 @@ class AddMeeting extends Component {
 
   clientChange = (e) => {
     this.setState({client: e.target.value});
+  }
+
+  organizationChange = (e) => {
+    this.setState({ organization: e.target.value});
   }
 
   locationChange = (e) => {
@@ -86,10 +93,12 @@ class AddMeeting extends Component {
   addMeeting = (e) => {
     const states = this.state;
     let that = this;
-    if(states.date && states.time && states.title && states.client && states.location && states.attendees.length && states.description){
+    if(states.datetime && states.title && states.client && states.location && states.attendees.length && states.description){
+      
        Axios.postMeeting(states, function(err, data){
           if(err) console.log(err);
           else {
+            that.props.onAddMeeting();
             that.handleClickOpen();
           }
        })
@@ -111,29 +120,8 @@ class AddMeeting extends Component {
               Add Meeting
           </Typography>
           <div  className={classes.spacing}>
-            <DatePicker big dateChange={this.dateChange}/>
+            <DateTimePicker big dateTimeChange={this.dateTimeChange}/>
           </div>
-
-          <TextField
-            id="time"
-            label="Time"
-            type="time"
-            required
-            onChange={this.timeChange}
-            className={classes.spacing}
-            InputLabelProps={{
-              FormLabelClasses: {
-                root: classes.label,
-              },
-              shrink: true,
-              focused: false
-            }}
-            inputProps={{
-              step: 300, 
-              style: {marginTop: 8}
-            }}
-            style={{maxWidth: 600}}
-          />
 
           <div style={{display: 'flex'}}  className={classes.spacing}>
             <TextField
@@ -211,6 +199,26 @@ class AddMeeting extends Component {
                 style: {marginTop: 8}
               }}
             placeholder="Client"
+            style={{maxWidth: 600}}
+          />
+
+          <TextField
+            label="Organization"
+            required
+            onChange={this.organizationChange}
+            className={classes.spacing}
+            InputLabelProps={{
+              FormLabelClasses: {
+                root: classes.label,
+              },
+              shrink: true,
+              focused: false
+            }}
+            inputProps={{
+                step: 300, 
+                style: {marginTop: 8}
+              }}
+            placeholder="Organization"
             style={{maxWidth: 600}}
           />
 

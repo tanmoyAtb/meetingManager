@@ -11,8 +11,6 @@ const Main = () => (
   <main>
     <Switch>
       <Route exact path='/' component={Layout}/>
-      <Route path='/add' component={Add}/>
-      <Route path='/meetings' component={Meetings}/>
       <Route path='/tenders' component={Tenders}/>
       <Route path='/meeting/:id' component={Meeting}/>
       <Route path='*' component={NotFound}/>

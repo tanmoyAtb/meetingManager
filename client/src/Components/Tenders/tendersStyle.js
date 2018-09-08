@@ -9,7 +9,10 @@ const styles = theme =>  ({
       padding: "8px 12px",
     }
   },
-  
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    width: '100%',
+  },
   btn: {
     [theme.breakpoints.down("sm")]: {
       padding: 8, minWidth: 36
@@ -26,3 +29,4 @@ const styles = theme =>  ({
 });
 
 export default styles;
+

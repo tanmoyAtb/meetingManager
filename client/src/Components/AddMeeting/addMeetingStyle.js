@@ -3,10 +3,10 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     flexFlow: 'column',
-    padding: "8px 20%",
+    padding: "8px",
     marginTop: 12,
     [theme.breakpoints.down("sm")]: {
-      padding: "8px 12px",
+      padding: "8px",
     }
   },
   spacing: {

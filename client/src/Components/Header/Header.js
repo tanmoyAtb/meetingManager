@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
+import MenuIcon from "@material-ui/icons/Menu";
 
 import styles from './headerStyle';
 
@@ -51,18 +51,12 @@ class MenuAppBar extends React.Component {
               <div>
                 <div style= {{display: 'flex'}}>
                   <Button
-                    href="/add"
-                    color="inherit"
-                    variant="outlined">
-                    Add Meeting
-                  </Button>
-                  <Button
                     aria-owns={anchorEl ? 'simple-menu' : null}
                     aria-haspopup="true"
                     color="inherit" 
                     onClick={this.handleMenu}
                   >
-                    <AccountCircle style={{marginLeft: 0}}/>
+                    <MenuIcon style={{marginLeft: 0}}/>
                   </Button>
                   
                 </div>
@@ -72,8 +66,8 @@ class MenuAppBar extends React.Component {
                   open={Boolean(anchorEl)}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={() => this.props.history.push("/meetings")}>Meetings History</MenuItem>
-                  <MenuItem onClick={() => this.props.history.push("/tenders")}>Tender Notices</MenuItem>
+                  <MenuItem onClick={() => this.props.history.push("/")}>MeetGo</MenuItem>
+                  <MenuItem onClick={() => this.props.history.push("/tenders")}>TenderGo</MenuItem>
                   <MenuItem onClick={this.handleLogout}>Logout - 
                       <Typography variant="display1" style={{color: '#263238', fontSize: 12}} >
                            {" " + this.props.name} 
