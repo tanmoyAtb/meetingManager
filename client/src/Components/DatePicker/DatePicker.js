@@ -89,9 +89,9 @@ class DatePickerComp extends React.Component {
           </div>
 
           <div className="dateBoxSmall">
-            <label className={bigClass} htmlFor="date">Date</label>
+            <label className={bigClass} htmlFor="date">{myLabel}</label>
             <div style={{display: 'flex'}}>
-              <input type="text" onChange={this.smallDateChange} value={dateString} className="myDateSmall" />
+              <input type="text" onChange={this.smallDateChange} value={dateString} className="myDateSmall"  style={{maxWidth: 180, flex: 1}}/>
               <Button 
                 variant="outlined"
                 className="calButton"
