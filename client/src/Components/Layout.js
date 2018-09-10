@@ -45,7 +45,6 @@ class Layout extends Component {
   }
 
   onUpcomingDateChange = (date) => {
-    console.log("up", date);
     let meetingsFiltered = [];
     let dateD = date.setHours(0, 0, 0, 0);
     let dateI = null;
@@ -80,7 +79,6 @@ class Layout extends Component {
   }
 
   onUnresolvedDateChange = (date) => {
-    console.log("up", date);
     let newDate = new Date();
     newDate.setHours(0, 0, 0, 0);
     
@@ -119,7 +117,6 @@ class Layout extends Component {
   }
 
   onDateHistoryChange = (date) => {
-    console.log("up", date);
     let meetingsFiltered = [];
     let dateD = date.setHours(0, 0, 0, 0);
     let dateI = null;
@@ -193,7 +190,6 @@ class Layout extends Component {
         if(err.includes("unauthorized")) that.history.push("/");
       }
       else {
-        console.log("users", data.users);
         that.setState({usersList : data.users});
       }
     })
@@ -206,7 +202,6 @@ class Layout extends Component {
         if(err.includes("unauthorized")) that.history.push("/");
       }
       else {
-        console.log("upcoming", data.meetings);
         that.setState({modeUpcoming: 'details', allUpcomingMeetings : data.meetings, filteredUpcomingMeetings : data.meetings, dateFilteredUpcomingMeetings : data.meetings});
       }
     })
@@ -219,7 +214,6 @@ class Layout extends Component {
         if(err.includes("unauthorized")) that.history.push("/");
       }
       else {
-        console.log("unresolved", data.meetings);
         that.setState({modeUnresolved: 'details', allUnresolvedMeetings : data.meetings, filteredUnresolvedMeetings : data.meetings, dateFilteredUnresolvedMeetings : data.meetings});
       }
     })
@@ -232,7 +226,6 @@ class Layout extends Component {
         if(err.includes("unauthorized")) that.history.push("/");
       }
       else {
-        console.log("history", data.meetings);
         that.setState({modeHistory: 'details', allHistoryMeetings : data.meetings, filteredHistoryMeetings : data.meetings, dateFilteredHistoryMeetings : data.meetings});
       }
     })
