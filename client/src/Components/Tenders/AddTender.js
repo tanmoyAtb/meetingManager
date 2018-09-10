@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import DateTimePicker from '../DatePicker/DateTimePicker';
+import DatePicker from '../DatePicker/DatePicker';
 import styles from './addTenderStyle.js';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -20,10 +21,13 @@ class AddTender extends Component {
     super(props);
     this.state = {
       open: false,
-      dateTimePublished: new Date(),
-      dateTimeLast: new Date(),
-      dateTimeDropping: new Date(),
-      dateTimeOpening: new Date(),
+      datePublishedString: new Date(),
+      dateLastString: new Date(),
+      dateDroppingString: new Date(),
+      dateOpeningString: new Date(),
+      timeLastString: "",
+      timeDroppingString: "",
+      timeOpeningString: "",
       client: '',
       work: '',
       note: '',
@@ -42,23 +46,35 @@ class AddTender extends Component {
   }
 
   handleDone = (e) => {
-    this.handleClose();
+    this.setState({ open: false });
   }
 
-  dateTimePublishedChange = (date) => {
-    this.setState({dateTimePublished: date});
+  datePublishedChange = (datePublishedString) => {
+    this.setState({datePublishedString: datePublishedString});
   }
 
-  dateTimeLastChange = (date) => {
-    this.setState({dateTimeLast: date});
+  dateLastChange = (dateLastString) => {
+    this.setState({dateLastString: dateLastString});
   }
 
-  dateTimeDroppingChange = (date) => {
-    this.setState({dateTimeDropping: date});
+  dateDroppingChange = (dateDroppingString) => {
+    this.setState({dateDroppingString: dateDroppingString});
   }
 
-  dateTimeOpeningChange = (date) => {
-    this.setState({dateTimeOpening: date});
+  dateOpeningChange = (dateOpeningString) => {
+    this.setState({dateOpeningString: dateOpeningString});
+  }
+
+  timeLastChange = (timeLastString) => {
+    this.setState({timeLastString: timeLastString});
+  }
+
+  timeDroppingChange = (timeDroppingString) => {
+    this.setState({timeDroppingString: timeDroppingString});
+  }
+
+  timeOpeningChange = (timeOpeningString) => {
+    this.setState({timeOpeningString: timeOpeningString});
   }
 
   clientChange = (e) => {
@@ -86,10 +102,48 @@ class AddTender extends Component {
   }
 
   addTender = (e) => {
-    const states = this.state;
+    let states = this.state;
     let that = this;
+
+    let datePublished = moment(states.datePublishedString, 'DD/MM/YYYY');
+
+    let dateLast = moment(states.dateLastString, 'DD/MM/YYYY');
+    let timeLast = moment(states.timeLastString, 'HH:mm');
+
+    let dateDropping = moment(states.dateDroppingString, 'DD/MM/YYYY');
+    let timeDropping = moment(states.timeDroppingString, 'HH:mm');
+
+    let dateOpening = moment(states.dateOpeningString, 'DD/MM/YYYY');
+    let timeOpening = moment(states.timeOpeningString, 'HH:mm');
+
+
+    if(datePublished.isValid()) states.dateTimePublished = datePublished.toDate();
+
+    if(dateLast.isValid() && timeLast.isValid()){
+      states.dateTimeLast = dateLast.set({
+          hour:   timeLast.get('hour'),
+          minute: timeLast.get('minute')
+      }).toDate();
+    }
+
+    if(dateDropping.isValid() && timeDropping.isValid()){
+      states.dateTimeDropping = dateDropping.set({
+          hour:   timeDropping.get('hour'),
+          minute: timeDropping.get('minute')
+      }).toDate();
+    }
+
+    if(dateOpening.isValid() && timeOpening.isValid()){
+      states.dateTimeOpening = dateOpening.set({
+          hour:   timeOpening.get('hour'),
+          minute: timeOpening.get('minute')
+      }).toDate();
+    }
+
+    console.log(states)
+
     if(states.dateTimePublished && states.dateTimeLast && states.dateTimeDropping && states.dateTimeOpening 
-        && states.client && states.work && states.note && states.scheduleMoney && states.securityMoney && states.link){
+        && states.client && states.work){
 
       Axios.postTender(states, function(err, tender){
         if(err){
@@ -97,8 +151,22 @@ class AddTender extends Component {
             if(err === 'unauthorized') that.props.history.push("/");
         }
         else {
-          that.handleClickOpen();
           that.props.gotNewTender(tender);
+          that.setState({ open: true,
+            datePublishedString: new Date(),
+            dateLastString: new Date(),
+            dateDroppingString: new Date(),
+            dateOpeningString: new Date(),
+            timeLastString: "",
+            timeDroppingString: "",
+            timeOpeningString: "",
+            client: '',
+            work: '',
+            note: '',
+            scheduleMoney: '',
+            securityMoney: '',
+            link: ''
+          });
         }
       })
     }
@@ -113,31 +181,34 @@ class AddTender extends Component {
     const { classes } = this.props;
 
     return (
-      <div style={{display: 'flex', flexFlow: 'column', marginTop: 24}}>
+      <div style={{display: 'flex', flexFlow: 'column', marginTop: 24, padding: 2}}>
           <Typography variant="display1" style={{color: '#263238', marginBottom: 16}} gutterBottom>
               Add Tender 
           </Typography>
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Published Date" dateTimeChange={this.dateTimePublishedChange}/>
+            <DatePicker dateString={this.state.datePublishedString} big label="Published Date" dateChange={this.datePublishedChange}/>
           </div>
 
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Last Date" dateTimeChange={this.dateTimeLastChange}/>
+            <DateTimePicker big dateString={this.state.dateLastString} label="Last Date" timeString={this.state.timeLastString} 
+                                timeChange={this.timeLastChange} dateChange={this.dateLastChange}/>
           </div>
 
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Dropping Date" dateTimeChange={this.dateTimeDroppingChange}/>
+            <DateTimePicker big dateString={this.state.dateDroppingString} label="Dropping Date" timeString={this.state.timeDroppingString} 
+                            timeChange={this.timeDroppingChange} dateChange={this.dateDroppingChange}/>
           </div>
 
           <div  className={classes.spacing}>
-            <DateTimePicker big label="Opening Date" dateTimeChange={this.dateTimeOpeningChange}/>
+            <DateTimePicker big dateString={this.state.dateOpeningString} label="Opening Date" timeString={this.state.timeOpeningString} 
+                            timeChange={this.timeOpeningChange} dateChange={this.dateOpeningChange}/>
           </div>
 
           <TextField
             label="Client"
-            required
             onChange={this.clientChange}
             className={classes.spacing}
+            value={this.state.client}
             InputLabelProps={{
               FormLabelClasses: {
                 root: classes.label,
@@ -156,6 +227,7 @@ class AddTender extends Component {
           <TextField
             id="multiline-static"
             label="Work"
+            value={this.state.work}
             onChange={this.workChange}
             multiline
             rows="4"
@@ -172,43 +244,19 @@ class AddTender extends Component {
                 style: {marginTop: 8}
               }}
             className={classes.spacing}
-            defaultValue=""
             margin="normal"
             placeholder="Work"
             style={{maxWidth: 600}}
           />
 
-          <TextField
-            id="multiline-static"
-            label="Note"
-            onChange={this.noteChange}
-            multiline
-            rows="4"
-            rowsMax="10"
-            InputLabelProps={{
-              FormLabelClasses: {
-                root: classes.label,
-              },
-              shrink: true,
-              focused: false
-            }}
-            inputProps={{
-                step: 300, 
-                style: {marginTop: 8}
-              }}
-            className={classes.spacing}
-            defaultValue=""
-            margin="normal"
-            placeholder="Note"
-            style={{maxWidth: 600}}
-          />
+          
 
           <div style={{display: 'flex'}}>
             <TextField
               label="Schedule Money"
-              required
               type="number"
               onChange={this.scheduleMoneyChange}
+              value={this.state.scheduleMoney}
               className={classes.spacing}
               InputLabelProps={{
                 FormLabelClasses: {
@@ -227,10 +275,10 @@ class AddTender extends Component {
 
             <TextField
               label="Security Money"
-              required
               type="number"
               onChange={this.securityMoneyChange}
               className={classes.spacing}
+              value={this.state.securityMoney}
               InputLabelProps={{
                 FormLabelClasses: {
                   root: classes.label,
@@ -248,9 +296,9 @@ class AddTender extends Component {
           </div>
           <TextField
             label="Link"
-            required
             onChange={this.linkChange}
             className={classes.spacing}
+            value={this.state.link}
             InputLabelProps={{
               FormLabelClasses: {
                 root: classes.label,
@@ -263,6 +311,31 @@ class AddTender extends Component {
                 style: {marginTop: 8}
               }}
             placeholder="Link"
+            style={{maxWidth: 600}}
+          />
+
+          <TextField
+            id="multiline-static"
+            label="Note"
+            onChange={this.noteChange}
+            value={this.state.note}
+            multiline
+            rows="4"
+            rowsMax="10"
+            InputLabelProps={{
+              FormLabelClasses: {
+                root: classes.label,
+              },
+              shrink: true,
+              focused: false
+            }}
+            inputProps={{
+                step: 300, 
+                style: {marginTop: 8}
+              }}
+            className={classes.spacing}
+            margin="normal"
+            placeholder="Note"
             style={{maxWidth: 600}}
           />
 

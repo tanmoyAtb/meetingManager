@@ -53,36 +53,9 @@ class DatePickerComp extends React.Component {
   constructor (props) {
     super(props)
 
-    const { date, time } = props;
-
-    if (date) {
-      this.state = {
-        dateMoment: moment(date),
-        dateDate: date,
-        dateString: moment(date).format('DD/MM/YYYY'),
-        open: false,
-        time: ''
-      };
+    this.state = {
+      open: false
     }
-    if (time && date) {
-      this.state = {
-        dateMoment: moment(date),
-        dateDate: date,
-        dateString: moment(date).format('DD/MM/YYYY'),
-        open: false,
-        time: time
-      };
-    }
-    else {
-      this.state = {
-        dateMoment: moment(),
-        dateDate: new Date(),
-        dateString: moment().format('DD/MM/YYYY'),
-        time: '',
-        open: false
-      };
-    }
-    
   }
 
   handleClickOpen = () => {
@@ -93,142 +66,65 @@ class DatePickerComp extends React.Component {
     this.setState({ open: false });
   }
 
-
-  handleChangeRaw = (e) => {
-    let date = e.target.value;
-    let aMoment = moment(date, 'DD/MM/YYYY');
-    if(aMoment.isValid()){
-
-      this.setState({ dateMoment: aMoment, dateString: date, dateDate: aMoment.toDate()});
-
-      if (this.state.time instanceof Date){
-        let dateD = aMoment.toDate();
-        let timeD = this.state.time;
-
-        let datetime = new Date(dateD.getFullYear(), dateD.getMonth(), dateD.getDate(), timeD.getHours(), timeD.getMinutes(), 0, 0);
-
-        this.props.dateTimeChange(datetime);
-      }
-      else {
-        this.props.dateTimeChange(null); 
-      }
-
-    }
-    else {
-      this.setState({ dateString: date, dateMoment : null, dateDate: null});
-      this.props.dateTimeChange(null); 
-    }
+  handleChangeRaw = e => {
+    this.props.dateChange(e.target.value);
   }
-
-  handleChangeDate = (date) => {
-    this.setState({
-      dateMoment: date,
-      dateDate: date.toDate(),
-      dateString: date.format('DD/MM/YYYY')
-    });
-    if (this.state.time instanceof Date){
-      let dateD = date.toDate();
-      let timeD = this.state.time;
-
-      let datetime = new Date(dateD.getFullYear(), dateD.getMonth(), dateD.getDate(), timeD.getHours(), timeD.getMinutes(), 0, 0);
-
-      this.props.dateTimeChange(datetime);
-    }
-    else {
-      this.props.dateTimeChange(null);
-    }
+ 
+  handleChangeDate = date => {
+    this.props.dateChange(date.format('DD/MM/YYYY'));
   }
 
   onChange = date => {
-    const aMoment = moment(date);
-    this.setState({ dateDate: date, dateString: aMoment.format('DD/MM/YYYY'), dateMoment: aMoment, open: false});
-
-    if (this.state.time instanceof Date){
-      let dateD = date;
-      let timeD = this.state.time;
-
-      let datetime = new Date(dateD.getFullYear(), dateD.getMonth(), dateD.getDate(), timeD.getHours(), timeD.getMinutes(), 0, 0);
-
-      this.props.dateTimeChange(datetime);
-    }
-    else {
-      this.props.dateTimeChange(null); 
-    }
+    let aMoment = moment(date);
+    this.props.dateChange(aMoment.format('DD/MM/YYYY'));
   }
 
   smallDateChange = e => {
-    let date = e.target.value;
-    let aMoment = moment(date, 'DD/MM/YYYY');
-    if(aMoment.isValid()){
-
-      this.setState({ dateMoment: aMoment, dateString: date, dateDate: aMoment.toDate()});
-
-      if (this.state.time instanceof Date){
-        let dateD = aMoment.toDate();
-        let timeD = this.state.time;
-
-        let datetime = new Date(dateD.getFullYear(), dateD.getMonth(), dateD.getDate(), timeD.getHours(), timeD.getMinutes(), 0, 0);
-
-        this.props.dateTimeChange(datetime);
-      }
-      else {
-        this.props.dateTimeChange(null); 
-      }
-
-    }
-    else {
-      this.setState({ dateString: date, dateMoment : null, dateDate: null});
-      this.props.dateTimeChange(null); 
-    }
+    this.props.dateChange(e.target.value);
   }
 
   timeChange = e => {
-    let time = moment(e.target.value, 'HH:mm');
-    if(time.isValid()){
-
-      this.setState({time: time.toDate()});
-
-      if (this.state.dateDate instanceof Date){
-          let dateD = this.state.dateDate;
-          let timeD = time.toDate();
-
-          let datetime = new Date(dateD.getFullYear(), dateD.getMonth(), dateD.getDate(), timeD.getHours(), timeD.getMinutes(), 0, 0);
-
-          this.props.dateTimeChange(datetime);
-      }
-      else{
-        this.props.dateTimeChange(null); 
-      }
-    }
-    else {
-      this.props.dateTimeChange(null); 
-    }
-    
+    this.props.timeChange(e.target.value); 
   }
  
   render() {
-    const  { classes, big, label } = this.props;
+    const  { classes, big, label, dateString, timeString } = this.props;
+
     let bigClass;
-    let labelIn = "Date"
-    if( label ) labelIn = label; 
     if(big){
       bigClass="bigClass";
     }
+    
+    let myLabel = "Date";
+    if(label){
+      myLabel = label;
+    }
+
+    let dateMoment = moment();
+    let dateDate= new Date();
+    
+    let dateMomentTemp= moment(dateString, 'DD/MM/YYYY');
+    
+    if (dateMomentTemp.isValid()){
+        dateMoment = dateMomentTemp;
+        dateDate= dateMomentTemp.toDate();
+    }
+
 
     const users = [];
 
     return (
       <div className={classes.container}>
           <div className="dateBoxLarge">
-            <label className={bigClass} htmlFor="date">{labelIn}</label>
-            <DatePicker dateFormat="DD/MM/YYYY" className="myDateLarge" selected={this.state.dateMoment}
+            <label className={bigClass} htmlFor="date">{myLabel}</label>
+            <DatePicker dateFormat="DD/MM/YYYY" className="myDateLarge" selected={dateMoment}
                       onChangeRaw={this.handleChangeRaw} onChange={this.handleChangeDate} />
           </div>
 
           <div className="dateBoxSmall">
-            <label className={bigClass} htmlFor="date">{labelIn}</label>
+            <label className={bigClass} htmlFor="date">{myLabel}</label>
             <div style={{display: 'flex'}}>
-              <input type="text" onChange={this.smallDateChange} value={this.state.dateString} className="myDateSmall" style={{maxWidth: 180, flex: 1}}/>
+              <input type="text" onChange={this.smallDateChange} value={dateString} className="myDateSmall" style={{maxWidth: 180, flex: 1}}/>
               <Button 
                 variant="outlined"
                 className="calButton"
@@ -245,7 +141,7 @@ class DatePickerComp extends React.Component {
                 label="Time"
                 type="time"
                 onChange={this.timeChange}
-                defaultValue={this.props.time && Helpers.format_time_string(new Date(this.props.time))}
+                value={timeString}
                 className={classes.timeBox}
                 InputLabelProps={{
                   FormLabelClasses: {
@@ -276,7 +172,7 @@ class DatePickerComp extends React.Component {
           >
             <Calendar
               onChange={this.onChange}
-              value={this.state.dateDate}
+              value={dateDate}
             />
           </Dialog>
         </div>

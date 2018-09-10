@@ -23,83 +23,74 @@ const styles = theme =>  ({
 class DatePickerComp extends React.Component {
   constructor (props) {
     super(props)
-
-    const { date } = props;
-
-    if (date) {
-      this.state = {
-        dateMoment: moment(date),
-        dateDate: date,
-        dateString: moment(date).format('DD/MM/YYYY'),
-        open: false
-      };
-    }
-    else {
-      this.state = {
-        dateMoment: moment(),
-        dateDate: new Date(),
-        dateString: moment().format('DD/MM/YYYY'),
-        open: false
-      };
+    
+    this.state = {
+      open: false
     }
     
-  }
- 
-  handleChangeDate = (date) => {
-    this.setState({
-      dateMoment: date,
-      dateDate: date.toDate(),
-      dateString: date.format('DD/MM/YYYY')
-    });
-    this.props.dateChange(date.toDate());
   }
 
   handleClickOpen = () => {
     this.setState({ open: true });
-  };
+  }
 
   handleClose = () => {
     this.setState({ open: false });
-  };
+  }
+
+  handleChangeRaw = (e) => {
+    this.props.dateChange(e.target.value);
+  }
+ 
+  handleChangeDate = (date) => {
+    this.props.dateChange(date.format('DD/MM/YYYY'));
+  }
 
   onChange = date => {
-    const aMoment = moment(date);
-    this.setState({ dateDate: date, dateString: aMoment.format('DD/MM/YYYY'), dateMoment: aMoment, open: false});
-    this.props.dateChange(date);
+    let aMoment = moment(date);
+    this.props.dateChange(aMoment.format('DD/MM/YYYY'));
   }
 
   smallDateChange = e => {
-    let date = e.target.value;
-    let aMoment = moment(date, 'DD/MM/YYYY');
-    if(aMoment.isValid()){
-      this.props.dateChange(aMoment.toDate());
-      this.setState({ dateMoment: aMoment, dateString: date, dateDate: aMoment.toDate()});
-    }
-    else {
-      this.setState({ dateString: date});
-    }
+    this.props.dateChange(e.target.value);
   }
  
   render() {
-    const  { big } = this.props;
+    const  { big, label, dateString } = this.props;
+    
     let bigClass;
     if(big){
       bigClass="bigClass";
+    }
+    
+    let myLabel = "Date";
+    if(label){
+      myLabel = label;
+    }
+    
+    let dateMoment = moment();
+    let dateDate= new Date();
+    
+    let dateMomentTemp= moment(dateString, 'DD/MM/YYYY');
+    
+    if (dateMomentTemp.isValid()){
+        dateMoment = dateMomentTemp;
+        dateDate= dateMomentTemp.toDate();
     }
 
     return (
       <div style={{display: 'flex'}}>
         <div className="myContainter">
           <div className="dateBoxLarge">
-            <label className={bigClass} htmlFor="date">Date</label>
-            <DatePicker dateFormat="DD/MM/YYYY" className="myDateLarge" selected={this.state.dateMoment}
-                      onChange={this.handleChangeDate} />
+            <label className={bigClass} htmlFor="date">{myLabel}</label>
+            <DatePicker dateFormat="DD/MM/YYYY" className="myDateLarge" selected={dateMoment}
+                      onChangeRaw={this.handleChangeRaw} onChange={this.handleChangeDate} />
           </div>
 
           <div className="dateBoxSmall">
             <label className={bigClass} htmlFor="date">Date</label>
             <div style={{display: 'flex'}}>
-              <input type="text" onChange={this.smallDateChange} value={this.state.dateString} className="myDateSmall" />
+              <input type="text" onChange={this.smallDateChange} value={dateString} className="myDateSmall" />
               <Button 
                 variant="outlined"
                 className="calButton"
@@ -124,7 +115,7 @@ class DatePickerComp extends React.Component {
           >
             <Calendar
               onChange={this.onChange}
-              value={this.state.dateDate}
+              value={dateDate}
             />
           </Dialog>
         </div>

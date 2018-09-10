@@ -27,9 +27,10 @@ class EditMeeting extends Component {
           open: false,
           rtl: true,
           attendees: attendees,
-          datetime: new Date(meeting.datetime),
-          datetime_from: new Date(meeting.datetime_from),
-          datetime_to: new Date(meeting.datetime_to),
+          dateString: moment(new Date(meeting.datetime)).format('DD/MM/YYYY'),
+          timeString: moment(new Date(meeting.datetime)).format('HH:mm'),
+          timeFromString: moment(new Date(meeting.datetime_from)).format('HH:mm'),
+          timeToString: moment(new Date(meeting.datetime_to)).format('HH:mm'),
           client: meeting.client,
           organization: meeting.organization,
           title: meeting.title,
@@ -39,8 +40,6 @@ class EditMeeting extends Component {
           attendees_options: []
 
       };
-
-
   }
 
   handleClickOpen = () => {
@@ -55,17 +54,20 @@ class EditMeeting extends Component {
         this.setState({attendees: selectedOption});
   }
 
-  dateChange = (date) => {
-    console.log(date);
-    this.setState({datetime: date});
+  dateChange = (dateString) => {
+    this.setState({dateString: dateString});
+  }
+
+  timeChange = (timeString) => {
+    this.setState({timeString: timeString});
   }
 
   timeFromChange = (e) => {
-    this.setState({datetime_from: moment(e.target.value, 'HH:mm').toDate()});
+    this.setState({timeFromString: e.target.value});
   }
 
   timeToChange = (e) => {
-    this.setState({datetime_to: moment(e.target.value, 'HH:mm').toDate()});
+    this.setState({timeToString: e.target.value});
   }
 
   titleChange = (e) => {
@@ -93,7 +95,25 @@ class EditMeeting extends Component {
   }
 
   editMeeting = (e) => {
-    const states = this.state;
+    let states = this.state;
+    let that = this;
+
+    let date = moment(states.dateString, 'DD/MM/YYYY');
+    let time = moment(states.timeString, 'HH:mm');
+
+    let time_from = moment(states.timeFromString, 'HH:mm');
+    let time_to = moment(states.timeToString, 'HH:mm');
+
+
+    if(date.isValid() && time.isValid()){
+      states.datetime = date.set({
+          hour:   time.get('hour'),
+          minute: time.get('minute')
+      }).toDate();
+    }
+    if(time_from.isValid()) states.datetime_from = time_from.toDate();
+    if(time_to.isValid()) states.datetime_to = time_to.toDate();
+    
     if(states.datetime && states.title && states.client && states.location && states.attendees.length && states.description){
        this.props.onEditMeeting(states);
     }
@@ -124,7 +144,7 @@ class EditMeeting extends Component {
               Edit Meeting
           </Typography>
           <div  className={classes.spacing}>
-            <DateTimePicker big dateTimeChange={this.dateChange} date={this.state.datetime} time={this.state.datetime}/>
+            <DateTimePicker big dateString={this.state.dateString} timeString={this.state.timeString} timeChange={this.timeChange} dateChange={this.dateChange}/>
           </div>
 
 

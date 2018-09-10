@@ -91,25 +91,6 @@ MeetingSchema.statics.insertMeeting = function(data, cb) {
             newAttendees.push({id: attendee.id, name: attendee.label, username: attendee.value});
         })
 
-
-        // let date = new Date(data.date);
-        // date.setHours(0,0,0,0);
-
-        // let time = new Date(data.time);
-        // time.setFullYear(1970, 0, 1);
-
-        // let time_from; 
-        // if(data.time_from) {
-        //     time_from= new Date(data.time_from);
-        //     time_from.setFullYear(1970, 0, 1);
-        // }
-
-        // let time_to;
-        // if(data.time_to) {
-        //     time_to= new Date(data.time_to);
-        //     time_to.setFullYear(1970, 0, 1);
-        // }
-
         newMeeting.datetime = data.datetime;
         newMeeting.datetime_from = data.datetime_from;
         newMeeting.datetime_to = data.datetime_to;
@@ -137,9 +118,9 @@ MeetingSchema.statics.insertMeeting = function(data, cb) {
     }
 };
 
-MeetingSchema.statics.insertNextMeeting = function(prevMeeting, data, user, cb) {
-    if(data.date && data.time && data.title && data.client && data.location && data.attendees.length && data.description && 
-        prevMeeting.id && prevMeeting.date && prevMeeting.title && prevMeeting.client){
+MeetingSchema.statics.insertNextMeeting = function(prevMeeting, data, cb) {
+    if(data.title && data.client && data.location && data.attendees.length && data.description && Date.parse(data.datetime) && 
+        prevMeeting.id && prevMeeting.datetime && prevMeeting.title && prevMeeting.client){
 
         const newMeeting = new this();
         
@@ -148,37 +129,19 @@ MeetingSchema.statics.insertNextMeeting = function(prevMeeting, data, user, cb) 
             newAttendees.push({id: attendee.id, name: attendee.label, username: attendee.value});
         })
 
-        
-        let date = new Date(data.date);
-        date.setHours(0,0,0,0);
 
-        let time = new Date(data.time);
-        time.setFullYear(1970, 0, 1);
-
-        let time_from; 
-        if(data.time_from) {
-            time_from= new Date(data.time_from);
-            time_from.setFullYear(1970, 0, 1);
-        }
-
-        let time_to;
-        if(data.time_to) {
-            time_to= new Date(data.time_to);
-            time_to.setFullYear(1970, 0, 1);
-        }
-
-        newMeeting.date = date;
-        newMeeting.time = time;
-        newMeeting.time_from = time_from;
-        newMeeting.time_to = time_to;
+        newMeeting.datetime = data.datetime;
+        newMeeting.datetime_from = data.datetime_from;
+        newMeeting.datetime_to = data.datetime_to;
         newMeeting.title = data.title;
         newMeeting.client = data.client;
+        newMeeting.organization = data.organization;
         newMeeting.location = data.location;
         newMeeting.attendees = newAttendees;
         newMeeting.description = data.description;
-        newMeeting.created_by = user;
 
         newMeeting.meeting_previous = prevMeeting;
+
         let that=this;
         
         newMeeting.save(function(err, meeting) {
@@ -187,7 +150,7 @@ MeetingSchema.statics.insertNextMeeting = function(prevMeeting, data, user, cb) 
             else{
                 var query   = { _id: prevMeeting.id }; 
                 var update  = { "meeting_next.id": meeting._id, 
-                                "meeting_next.date": meeting.date, 
+                                "meeting_next.datetime": meeting.datetime, 
                                 "meeting_next.title": meeting.title, 
                                 "meeting_next.client": meeting.client
                             }; 
@@ -369,8 +332,9 @@ MeetingSchema.statics.getMeetingsOnDate = function(date, cb) {
 MeetingSchema.statics.getMeetingOnId = function(id, cb) {
 
     this.findOne({_id : id}, function(err, meeting){
-        if (err) cb("server error", null);
+        if (err) {console.log(err); cb(null, null);}
         else {
+            console.log(meeting);
             cb(null, meeting);
         }
 
@@ -378,19 +342,49 @@ MeetingSchema.statics.getMeetingOnId = function(id, cb) {
     
 };
 
-MeetingSchema.statics.deleteMeetingOnId = function(id, cb) {
+MeetingSchema.statics.deleteMeetingOnId = function(id, prevId, cb) {
+    var query   = { _id: prevId }; 
+    var update  = { "meeting_next.id": null, 
+                    "meeting_next.datetime": null, 
+                    "meeting_next.title": null, 
+                    "meeting_next.client": null }; 
 
-    this.remove({_id : id}, function(err){
-        if (err) {
-            console.log(err);
-            cb("server error");
-        }
-        else {
-            console.log("deleted");
-            cb(null);
-        }
+    var options = { new: true }; 
+    let that = this;
 
-    })
+    if(prevId) {
+
+        this.findOneAndUpdate(query, update, options, function(err, savedMeeting){ 
+            if (err) {
+                cb("Server error", null);
+            }else{
+                that.remove({_id : id}, function(err){
+                if (err) {
+                    console.log(err);
+                    cb("server error");
+                }
+                else {
+                    console.log("deleted");
+                    cb(null);
+                }
+
+            })
+    
+            } 
+        }); 
+    }
+    else {
+        that.remove({_id : id}, function(err){
+            if (err) {
+                console.log(err);
+                cb("server error");
+            }
+            else {
+                console.log("deleted");
+                cb(null);
+            }
+        })
+    }
     
 };
 

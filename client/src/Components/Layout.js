@@ -189,6 +189,7 @@ class Layout extends Component {
     let that = this;
     Axios.getUsersList(function(err, data){
       if(err) {
+        console.log(err);
         if(err.includes("unauthorized")) that.history.push("/");
       }
       else {

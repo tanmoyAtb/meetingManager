@@ -258,23 +258,23 @@ class Axios {
 	            callback(null, res.data);
 	          })
 	          .catch((error) => {
-	          	console.log(error.response);
-	             if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
+	             if(error.response){
+	             	if(error.response.status === 401){
 	             		localStorage.removeItem('jwtToken');
 	             		localStorage.removeItem('name');
 	             		localStorage.removeItem('username');
 	             		callback('unauthorized server', null);
 	             	}
 	             	else{
-	             		callback('server error', null);
+	             		console.log(error);
+	             		callback("server error", null);
 	             	}
 	             }
 	             else {
-	             	callback(error, null);
+	             	console.log(error);
+	             	callback("server error", null);
 	             }
 	          });
-	          
 	      }
 	      else {
 	        callback('unauthorized', null);
@@ -313,166 +313,6 @@ class Axios {
 	      }
 	}
 
-	postTender(data, callback){
-		if(localStorage.getItem('jwtToken')){
-	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-	      	
-	        axios.post(url + '/auth/posttender', data)
-	          .then(res => {
-	            callback(null, res.data);
-	          })
-	          .catch((error) => {
-	          	console.log(error.response);
-	            if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
-	             		localStorage.removeItem('jwtToken');
-	             		localStorage.removeItem('name');
-	             		localStorage.removeItem('username');
-	             		callback('unauthorized server', null);
-	             	}
-	             	else{
-	             		callback('server error', null);
-	             	}
-	             }
-	             else {
-	             	callback(error, null);
-	             }
-	          });
-	          
-	      }
-	      else {
-	        callback('unauthorized local', null);
-	      }
-	}
-
-	getOngoingTenders(callback){
-		if(localStorage.getItem('jwtToken')){
-	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-	      	
-	        axios.get(url + '/auth/ongoingtenders')
-	          .then(res => {
-	            callback(null, res.data);
-	          })
-	          .catch((error) => {
-	          	console.log(error.response);
-	            if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
-	             		localStorage.removeItem('jwtToken');
-	             		localStorage.removeItem('name');
-	             		localStorage.removeItem('username');
-	             		callback('unauthorized', null);
-	             	}
-	             	else{
-	             		callback('server error', null);
-	             	}
-	             }
-	             else {
-	             	callback(error, null);
-	             }
-	          });
-	          
-	      }
-	      else {
-	        callback('unauthorized', null);
-	      }
-	}
-  
-	updateScheduleBought(id, callback){
-		if(localStorage.getItem('jwtToken')){
-	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-	      	
-	        axios.post(url + '/auth/updateschedulebought', { id: id} )
-	          .then(res => {
-	            callback(null, res.data);
-	          })
-	          .catch((error) => {
-	          	console.log(error.response);
-	            if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
-	             		localStorage.removeItem('jwtToken');
-	             		localStorage.removeItem('name');
-	             		localStorage.removeItem('username');
-	             		callback('unauthorized', null);
-	             	}
-	             	else{
-	             		callback('server error', null);
-	             	}
-	             }
-	             else {
-	             	callback(error, null);
-	             }
-	          });
-	          
-	      }
-	      else {
-	        callback('unauthorized', null);
-	      }
-	}
-
-	updateScheduleDropped(id, callback){
-		if(localStorage.getItem('jwtToken')){
-	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-	      	
-	        axios.post(url + '/auth/updatescheduledropped', { id: id})
-	          .then(res => {
-	            callback(null, res.data);
-	          })
-	          .catch((error) => {
-	          	console.log(error.response);
-	            if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
-	             		localStorage.removeItem('jwtToken');
-	             		localStorage.removeItem('name');
-	             		localStorage.removeItem('username');
-	             		callback('unauthorized', null);
-	             	}
-	             	else{
-	             		callback('server error', null);
-	             	}
-	             }
-	             else {
-	             	callback(error, null);
-	             }
-	          });
-	          
-	      }
-	      else {
-	        callback('unauthorized', null);
-	      }
-	}
-
-	updateWorkOrdered(id, callback){
-		if(localStorage.getItem('jwtToken')){
-	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-	      	
-	        axios.post(url + '/auth/updateworkordered ', { id: id})
-	          .then(res => {
-	            callback(null, res.data);
-	          })
-	          .catch((error) => {
-	          	console.log(error.response);
-	            if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
-	             		localStorage.removeItem('jwtToken');
-	             		localStorage.removeItem('name');
-	             		localStorage.removeItem('username');
-	             		callback('unauthorized', null);
-	             	}
-	             	else{
-	             		callback('server error', null);
-	             	}
-	             }
-	             else {
-	             	callback(error, null);
-	             }
-	          });
-	          
-	      }
-	      else {
-	        callback('unauthorized', null);
-	      }
-	}
-
 	postNextMeeting(prevMeeting, data, callback){
 		if(localStorage.getItem('jwtToken')){
 	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
@@ -482,23 +322,23 @@ class Axios {
 	            callback(null, res.data);
 	          })
 	          .catch((error) => {
-	          	console.log(error.response);
-	             if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
+	             if(error.response){
+	             	if(error.response.status === 401){
 	             		localStorage.removeItem('jwtToken');
 	             		localStorage.removeItem('name');
 	             		localStorage.removeItem('username');
 	             		callback('unauthorized server', null);
 	             	}
 	             	else{
-	             		callback('server error', null);
+	             		console.log(error);
+	             		callback("server error", null);
 	             	}
 	             }
 	             else {
-	             	callback(error, null);
+	             	console.log(error);
+	             	callback("server error", null);
 	             }
 	          });
-	          
 	      }
 	      else {
 	        callback('unauthorized', null);
@@ -547,55 +387,55 @@ class Axios {
 	            callback(null, res.data);
 	          })
 	          .catch((error) => {
-	          	console.log(error.response);
-	             if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
+	             if(error.response){
+	             	if(error.response.status === 401){
 	             		localStorage.removeItem('jwtToken');
 	             		localStorage.removeItem('name');
 	             		localStorage.removeItem('username');
 	             		callback('unauthorized server', null);
 	             	}
 	             	else{
-	             		callback('server error', null);
+	             		console.log(error);
+	             		callback("server error", null);
 	             	}
 	             }
 	             else {
-	             	callback(error, null);
+	             	console.log(error);
+	             	callback("server error", null);
 	             }
 	          });
-	          
 	      }
 	      else {
 	        callback('unauthorized', null);
 	      }
 	}
 
-	deleteOneMeeting(id, callback){
+	deleteOneMeeting(id, prevId, callback){
 		if(localStorage.getItem('jwtToken')){
 	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
 	      
-	        axios.get(url + '/auth/deletemeeting/' + id)
+	        axios.post(url + '/auth/deletemeeting', {id: id, prevId: prevId} )
 	          .then(res => {
 	            callback(null);
 	          })
 	          .catch((error) => {
-	          	console.log(error.response);
-	             if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
+	             if(error.response){
+	             	if(error.response.status === 401){
 	             		localStorage.removeItem('jwtToken');
 	             		localStorage.removeItem('name');
 	             		localStorage.removeItem('username');
 	             		callback('unauthorized server', null);
 	             	}
 	             	else{
-	             		callback('server error', null);
+	             		console.log(error);
+	             		callback("server error", null);
 	             	}
 	             }
 	             else {
-	             	callback(error, null);
+	             	console.log(error);
+	             	callback("server error", null);
 	             }
 	          });
-	          
 	      }
 	      else {
 	        callback('unauthorized local');
@@ -611,26 +451,314 @@ class Axios {
 	            callback(null, res.data);
 	          })
 	          .catch((error) => {
-	          	console.log(error.response);
-	             if(error.response && error.response.data){
-	             	if(!error.response.data.authorized){
+	             if(error.response){
+	             	if(error.response.status === 401){
 	             		localStorage.removeItem('jwtToken');
 	             		localStorage.removeItem('name');
 	             		localStorage.removeItem('username');
 	             		callback('unauthorized server', null);
 	             	}
 	             	else{
-	             		callback('server error', null);
+	             		console.log(error);
+	             		callback("server error", null);
 	             	}
 	             }
 	             else {
-	             	callback(error, null);
+	             	console.log(error);
+	             	callback("server error", null);
 	             }
 	          });
-	          
 	      }
 	      else {
 	        callback('unauthorized local', null);
+	      }
+	}
+
+
+	postTender(data, callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.post(url + '/auth/posttender', data)
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized local', null);
+	      }
+	}
+
+	getOngoingTenders(callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.get(url + '/auth/ongoingtenders')
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+	getBoughtTenders (callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.get(url + '/auth/boughttenders')
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+
+	getDroppedTenders (callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.get(url + '/auth/droppedtenders')
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+
+	getRewardedTenders (callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.get(url + '/auth/rewardedtenders')
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+  
+	updateScheduleBought(id, callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.post(url + '/auth/updateschedulebought', { id: id} )
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+
+	updateScheduleDropped(id, callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.post(url + '/auth/updatescheduledropped', { id: id})
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+
+	updateWorkRewarded(id, callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.post(url + '/auth/updateworkrewarded ', { id: id})
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
+
+	onEditNote(id, note, callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.post(url + '/auth/editnotetender', { id: id, note: note})
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
 	      }
 	}
 }

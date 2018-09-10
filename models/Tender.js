@@ -47,7 +47,7 @@ const TenderSchema = new Schema({
         type: Boolean,
         default: false
     },
-    work_ordered: {
+    work_rewarded: {
         type: Boolean,
         default: false
     }
@@ -56,7 +56,7 @@ const TenderSchema = new Schema({
 
 TenderSchema.statics.insertTender = function(data, cb) {
     if(data.dateTimePublished && data.dateTimeLast && data.dateTimeDropping && data.dateTimeOpening 
-        && data.client && data.work && data.note && data.scheduleMoney && data.securityMoney && data.link){
+        && data.client && data.work){
 
         const newTender = new this();
 
@@ -121,11 +121,11 @@ TenderSchema.statics.updateScheduleDropped = function(id, cb) {
         });
 };
 
-TenderSchema.statics.updateWorkOrdered = function(id, cb) {
+TenderSchema.statics.updateWorkRewarded = function(id, cb) {
         
 
         var query   = { _id: id }; 
-        var update  = { work_ordered: true }; 
+        var update  = { work_rewarded: true }; 
 
         var options = { new: true }; 
 
@@ -141,17 +141,116 @@ TenderSchema.statics.updateWorkOrdered = function(id, cb) {
 
 TenderSchema.statics.getOngoingtenders = function(cb) {
 
-    this.find({
-        published_datetime: {"$lte": new Date()}, 
-        last_datetime: {"$gte": new Date()}
+    this.aggregate([
+         
+        {
+            $match : {
+                last_datetime: {"$gte": new Date()}
+            }
+        },
+        { 
+            $sort : { 
+                last_datetime : 1 
+            } 
+        }
 
-    }, function(err, tenders){
+     ], function(err, tenders){
             if (err) cb("server error", null);
             else {
                 cb(null, tenders);
             }
+    })
+    
+};
 
-        })
+TenderSchema.statics.getBoughtTenders = function(cb) {
+
+
+    this.aggregate([
+         
+        {
+            $match : {
+                schedule_bought : true 
+            }
+        },
+        { 
+            $sort : { 
+                last_datetime : 1 
+            } 
+        }
+
+     ], function(err, tenders){
+            if (err) cb("server error", null);
+            else {
+                cb(null, tenders);
+            }
+    })
+    
+};
+
+TenderSchema.statics.getDroppedTenders = function(cb) {
+
+    this.aggregate([
+         
+        {
+            $match : {
+                schedule_dropped : true
+            }
+        },
+        { 
+            $sort : { 
+                last_datetime : 1 
+            } 
+        }
+
+     ], function(err, tenders){
+            if (err) cb("server error", null);
+            else {
+                cb(null, tenders);
+            }
+    })
+};
+
+TenderSchema.statics.getRewardedTenders = function(cb) {
+
+    this.aggregate([
+         
+        {
+            $match : {
+                work_rewarded : true
+            }
+        },
+        { 
+            $sort : { 
+                last_datetime : 1 
+            } 
+        }
+
+     ], function(err, tenders){
+            if (err) cb("server error", null);
+            else {
+                cb(null, tenders);
+            }
+    })
+};
+
+TenderSchema.statics.onEditNote = function(id, note, cb) {
+
+    var query   = { _id: id }; 
+    var update  = { note: note }; 
+    var options = { new: true }; 
+    this.findOneAndUpdate(query, update, options, function(err, savedTender){ 
+        if (err) {
+            cb("Server error", null);
+        }else{
+            return cb(null, savedTender);
+        } 
+    });
+}
+
+TenderSchema.statics.updateDoneSummary = function(id, summary, cb) {
+
+    
     
 };
 
@@ -197,20 +296,7 @@ TenderSchema.statics.deleteTenderOnId = function(id, cb) {
     
 };
 
-TenderSchema.statics.updateDoneSummary = function(id, summary, cb) {
 
-    var query   = { _id: id }; 
-    var update  = { done: true, summary: summary }; 
-    var options = { new: true }; 
-    this.findOneAndUpdate(query, update, options, function(err, savedTender){ 
-        if (err) {
-            cb("Server error", null);
-        }else{
-            return cb(null, savedTender);
-        } 
-    });
-    
-};
 
 
 module.exports = mongoose.model('Tender', TenderSchema);

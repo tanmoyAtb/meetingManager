@@ -22,7 +22,8 @@ class Ongoing extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      mode: 'wait',
+      tenders: []
     };
   }
 
@@ -42,14 +43,14 @@ class Ongoing extends Component {
 
       return (
         <div style={{marginTop: 24, padding: 1}}>
-          {!this.props.tenders.length && "No Ongoing Tenders"
+          {!this.props.tenders.length && "No Work Rewarded Tenders"
 
           }
           {this.props.tenders && 
             this.props.tenders.map(function(tender){
               return (
-                  <CardTender mode="ongoing" key={tender._id} tender={tender} onEditNote={onEditNote}
-                  onBoughtSchedule={onBoughtSchedule}  onDroppedSchedule= {onDroppedSchedule} onRewardedWork={onRewardedWork} />
+                  <CardTender mode="rewarded" key={tender._id} tender={tender} onEditNote={onEditNote}
+                  onBoughtSchedule={onBoughtSchedule}  onDroppedSchedule= {onDroppedSchedule} onRewardedWork={onRewardedWork}/>
                 )
             })
           }

@@ -31,22 +31,34 @@ class MenuAppBar extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, tender } = this.props;
     const { anchorEl } = this.state;
+    let button = <Button
+                  href="/"
+                  color="inherit"
+                  style={{color: '#FFF', fontFamily: 'Dekko', fontSize: 36, textTransform: 'none', padding: 4}}
+                  
+                  >
+                  MeetGo
+              </Button>
+    if(tender){
+      button = <Button
+                href="/tenders"
+                color="inherit"
+                style={{color: '#FFF', fontFamily: 'Dekko', fontSize: 36, textTransform: 'none', padding: 4}}
+                
+                >
+                BigTender
+              </Button>
+    } 
 
     return (
       <div className={classes.root}>
         <AppBar position="static" className={classes.bar}>
           <Toolbar style={{padding: 0}}>
-              <Button
-                href="/"
-                color="inherit"
-                style={{color: '#FFF', fontFamily: 'Dekko', fontSize: 36, textTransform: 'none', padding: 4}}
-                
-                >
-                MeetGo
-              </Button>
+              
               <div style={{flex: 1}}>
+                {button}
               </div>
               <div>
                 <div style= {{display: 'flex'}}>
@@ -67,7 +79,7 @@ class MenuAppBar extends React.Component {
                   onClose={this.handleClose}
                 >
                   <MenuItem onClick={() => this.props.history.push("/")}>MeetGo</MenuItem>
-                  <MenuItem onClick={() => this.props.history.push("/tenders")}>TenderGo</MenuItem>
+                  <MenuItem onClick={() => this.props.history.push("/tenders")}>BigTender</MenuItem>
                   <MenuItem onClick={this.handleLogout}>Logout - 
                       <Typography variant="display1" style={{color: '#263238', fontSize: 12}} >
                            {" " + this.props.name} 

@@ -61,12 +61,13 @@ class Meeting extends Component {
 
   handleYesConfirm = () => {
     let that=this;
-    Axios.deleteOneMeeting(this.props.match.params.id, function(err){
+    Axios.deleteOneMeeting(this.props.match.params.id, this.state.meeting.meeting_previous.id, function(err){
       if(err) {
         console.log(err);
+        if(err.includes("unauthorized")) that.history.push("/");
       }
       else {
-        that.props.history.push("/");
+         that.props.history.push("/");
       }
     })
   };
@@ -74,7 +75,10 @@ class Meeting extends Component {
   handleDone = () => {
     let that=this;
     Axios.updateDoneOneMeeting(this.props.match.params.id, this.state.summary, function(err, data){
-      if(err) console.log(err)
+      if(err) {
+        console.log(err);
+        if(err.includes("unauthorized")) that.history.push("/");
+      }
       else {
         that.setState({meeting: data.meeting});
         that.handleClose();
@@ -105,12 +109,12 @@ class Meeting extends Component {
     let that=this;
 
     Axios.postNextMeeting(prevMeeting, data, function(err, meeting){
-      if(err){
+      if(err) {
         console.log(err);
-          if(err === 'unauthorized') that.props.history.push("/");
+        if(err.includes("unauthorized")) that.history.push("/");
       }
       else {
-        that.props.history.push("/");
+        that.props.history.push(`/meeting/${meeting._id}`);
       }
     })
 
@@ -120,9 +124,9 @@ class Meeting extends Component {
     let that= this;
     console.log(data);
     Axios.editMeeting(this.props.match.params.id, data, function(err, data){
-       if (err) {
+       if(err) {
           console.log(err);
-          if(err === 'unauthorized') that.props.history.push("/");
+          if(err.includes("unauthorized")) that.history.push("/");
         }
         else {
           if(data.meeting && data.meeting._id){
@@ -139,13 +143,16 @@ class Meeting extends Component {
   componentDidMount() {
       let that=this;
       Axios.getOneMeeting(this.props.match.params.id, function(err, data){
-        if (err) {
+        if(err) {
           console.log(err);
-          if(err === 'unauthorized') that.props.history.push("/");
+          if(err.includes("unauthorized")) that.history.push("/");
         }
         else {
           if(data.meeting && data.meeting._id){
             that.setState({mode: 'details', name: data.name, username: data.username, meeting: data.meeting});
+          }
+          else{
+            that.setState({mode: 'details', name: data.name, username: data.username, meeting: null});
           }
         }
       })
@@ -156,11 +163,21 @@ class Meeting extends Component {
     const { classes } = this.props;
     const { mode, meeting } = this.state;
 
-    console.log(meeting);
-
     if(mode === 'wait'){
       return (
           <Loader/>
+        )
+    }
+
+    else if(mode === 'details' && !meeting){
+      return (
+          <div >
+            <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
+            <div className={classes.container} style={{marginTop: 24}}>
+              No Meeting Found
+            </div>
+            
+          </div>
         )
     }
     else if(mode === 'details' && meeting){
@@ -203,10 +220,12 @@ class Meeting extends Component {
               <div>
                 <Button variant="outlined" size="small" color="primary" onClick={this.handleClickOpen}>
                   Edit Summary
-                </Button>
-                <Button variant="outlined" size="small" color="primary" onClick={this.addNextMeeting}>
-                  Add Next Meeting
-                </Button>
+                </Button>{!meeting.meeting_next.id && 
+                    <Button variant="outlined" size="small" color="primary" onClick={this.addNextMeeting}>
+                      Add Next Meeting
+                    </Button>
+                }
+                
               </div>
               } 
             </div>
@@ -302,7 +321,7 @@ class Meeting extends Component {
                     <div style={{flex: 1}}>
                       <div style={{display: 'flex'}}>
                         <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
-                            {Helpers.format_date(new Date(meeting.meeting_previous.date))} 
+                            {Helpers.format_date(new Date(meeting.meeting_previous.datetime))} 
                         </Typography>
                       </div>
                       <div>
@@ -325,7 +344,7 @@ class Meeting extends Component {
                     <div style={{flex: 1}}>
                       <div style={{display: 'flex'}}>
                         <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
-                            {Helpers.format_date(new Date(meeting.meeting_next.date))} 
+                            {Helpers.format_date(new Date(meeting.meeting_next.datetime))} 
                         </Typography>
                       </div>
                       <div>
@@ -433,7 +452,7 @@ class Meeting extends Component {
             <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
             <div className={classes.container}>
               <Button variant="contained" onClick={this.handleShowDetails} color="primary" style={{marginBottom: 16, maxWidth: 220}}>
-                Cancel
+                Back
               </Button>
               <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
                   Previous Meeting

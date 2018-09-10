@@ -60,42 +60,42 @@ authRouter.get('/userslist', passport.authenticate('jwt', { session: false}), fu
 });
 
 authRouter.get('/upcomingmeetings', passport.authenticate('jwt', { session: false}), function(req, res) {
-    console.log("upcoming");
+    
     Meeting.getUpcomingMeetings(function(err, meetings){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: 'Server Error.'});
+        return res.status(500).send({success: false, msg: 'Server Error.'});
       }
       else {
-        console.log("upcoming", meetings);
-        return res.json({success: true, authorized: true, user: req.user, meetings: meetings});
+        
+        return res.json({success: true, meetings: meetings});
       }
     })
   
 });
 
 authRouter.get('/unresolvedmeetings', passport.authenticate('jwt', { session: false}), function(req, res) {
-    console.log("unresolved");
+    
     Meeting.getUnresolvedMeetings(function(err, meetings){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: 'Server Error.'});
+        return res.status(500).send({success: false, msg: 'Server Error.'});
       }
       else {
-        console.log("unresolved", meetings);
-        return res.json({success: true, authorized: true, user: req.user, meetings: meetings});
+        
+        return res.json({success: true, meetings: meetings});
       }
     })
   
 });
 
 authRouter.get('/historymeetings', passport.authenticate('jwt', { session: false}), function(req, res) {
-    console.log("history");
+    
     Meeting.getHistoryMeetings(function(err, meetings){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: 'Server Error.'});
+        return res.status(500).send({success: false, msg: 'Server Error.'});
       }
       else {
-        console.log("history", meetings);
-        return res.json({success: true, authorized: true, user: req.user, meetings: meetings});
+        
+        return res.json({success: true, meetings: meetings});
       }
     })
   
@@ -103,173 +103,188 @@ authRouter.get('/historymeetings', passport.authenticate('jwt', { session: false
 
 
 authRouter.post('/editmeeting', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
-    Meeting.updateMeeting(req.body.id, req.body.data, function(err, meeting){
-      if (err) {
-        return res.status(403).send({success: false, authorized: true, msg: 'Server Error.'});
-      }
-      else {
-        return res.json({success: true, authorized: true, meeting: meeting});
-      }
-    })
-  } 
-  else {
-    return res.status(403).send({success: false, authorized: false, msg: 'Unauthorized.'});
-  }
+  
+  Meeting.updateMeeting(req.body.id, req.body.data, function(err, meeting){
+    if (err) {
+      return res.status(500).send({success: false, msg: 'Server Error.'});
+    }
+    else {
+      return res.json({success: true, meeting: meeting});
+    }
+  })
+  
 });
 
 authRouter.post('/nextmeeting', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
-    let User = {
-                id: req.user._id,
-                name: req.user.name,
-                username: req.user.username
-              };
-
-    Meeting.insertNextMeeting(req.body.prevMeeting, req.body.data, User, function(err, meeting){
+  
+  Meeting.insertNextMeeting(req.body.prevMeeting, req.body.data, function(err, meeting){
       if (err) {
-        return res.status(403).send({success: false, authorized: true, msg: 'Server Error.'});
+        return res.status(500).send({success: false, msg: 'Server Error.'});
       }
       else {
-        return res.json({success: true, authorized: true, meeting: meeting});
+        return res.json({success: true, meeting: meeting});
       }
     })
-  } 
-  else {
-    return res.status(403).send({success: false, authorized: false, msg: 'Unauthorized.'});
-  }
+  
 });
 
 
 authRouter.get('/meeting/:id', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
+  
     Meeting.getMeetingOnId(req.params.id, function(err, meeting){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false, msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, name: req.user.name, username: req.user.username, meeting: meeting});
+        return res.json({success: true, name: req.user.name, username: req.user.username, meeting: meeting});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
-  }
+  
 });
 
-authRouter.get('/deletemeeting/:id', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
-    Meeting.deleteMeetingOnId(req.params.id, function(err){
+authRouter.post('/deletemeeting', passport.authenticate('jwt', { session: false}), function(req, res) {
+  
+    Meeting.deleteMeetingOnId(req.body.id, req.body.prevId, function(err){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false, msg: err});
       }
       else {
-        return res.json({success: true, authorized: true});
+        return res.json({success: true});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: err});
-  }
 });
 
 authRouter.post('/meeting/:id', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
+  
     Meeting.updateDoneSummary(req.params.id, req.body.summary, function(err, meeting){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false,  msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, meeting: meeting});
+        return res.json({success: true,  meeting: meeting});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
-  }
+  
 });
 
 authRouter.post('/posttender', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
+  
     Tender.insertTender(req.body, function(err, tender){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false,  msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, tender: tender});
+        return res.json({success: true, tender: tender});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
-  }
+  
 });
 
 authRouter.get('/ongoingtenders', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
+  
     Tender.getOngoingtenders(function(err, tenders){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false, msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, tenders: tenders});
+        return res.json({success: true, tenders: tenders});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
-  }
+  
+});
+  
+authRouter.get('/boughttenders', passport.authenticate('jwt', { session: false}), function(req, res) {
+  
+    Tender.getBoughtTenders(function(err, tenders){
+      if(err) {
+        return res.status(500).send({success: false, msg: err});
+      }
+      else {
+        return res.json({success: true, tenders: tenders});
+      }
+    })
+  
+});
+
+authRouter.get('/droppedtenders', passport.authenticate('jwt', { session: false}), function(req, res) {
+  
+    Tender.getDroppedTenders(function(err, tenders){
+      if(err) {
+        return res.status(500).send({success: false, msg: err});
+      }
+      else {
+        return res.json({success: true, tenders: tenders});
+      }
+    })
+  
+});  
+
+authRouter.get('/rewardedtenders', passport.authenticate('jwt', { session: false}), function(req, res) {
+  
+    Tender.getRewardedTenders(function(err, tenders){
+      if(err) {
+        return res.status(500).send({success: false, msg: err});
+      }
+      else {
+        return res.json({success: true, tenders: tenders});
+      }
+    })
+  
 });
 
 authRouter.post('/updateschedulebought', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
+  
     Tender.updateScheduleBought(req.body.id, function(err, tender){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false,  msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, tender: tender});
+        return res.json({success: true,  tender: tender});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
-  }
+  
 });
 
 authRouter.post('/updatescheduledropped', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
+  
     Tender.updateScheduleDropped(req.body.id, function(err, tender){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false,  msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, tender: tender});
+        return res.json({success: true, tender: tender});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
-  }
+  
 });
 
-authRouter.post('/updateworkordered', passport.authenticate('jwt', { session: false}), function(req, res) {
-  let token = getToken(req.headers);
-  if (token) {
-    Tender.updateWorkOrdered(req.body.id, function(err, tender){
+authRouter.post('/updateworkrewarded', passport.authenticate('jwt', { session: false}), function(req, res) {
+  
+    Tender.updateWorkRewarded(req.body.id, function(err, tender){
       if(err) {
-        return res.status(403).send({success: false, authorized: true, msg: err});
+        return res.status(500).send({success: false, msg: err});
       }
       else {
-        return res.json({success: true, authorized: true, tender: tender});
+        return res.json({success: true, tender: tender});
       }
     })
-  } else {
-    return res.status(403).send({success: false, authorized: false, msg: "Unauthorized"});
-  }
+  
 });
+
+authRouter.post('/editnotetender', passport.authenticate('jwt', { session: false}), function(req, res) {
+  
+    Tender.onEditNote(req.body.id, req.body.note, function(err, tender){
+      if(err) {
+        return res.status(500).send({success: false, msg: err});
+      }
+      else {
+        return res.json({success: true, tender: tender});
+      }
+    })
+  
+});
+
+
 
 
 getToken = function (headers) {

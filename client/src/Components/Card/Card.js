@@ -73,7 +73,7 @@ class Layout extends Component {
                     </div>
                     <div>
                       <Typography variant="display1" style={{color: '#546E7A', marginBottom: 30, fontSize: 16, fontStyle: 'italic'}} >
-                          {meeting.time_from && Helpers.format_time(new Date(meeting.time_from))} - {meeting.time_to && Helpers.format_time(new Date(meeting.time_to))} 
+                          {meeting.datetime_from && Helpers.format_time(new Date(meeting.datetime_from))} - {meeting.datetime_to && Helpers.format_time(new Date(meeting.datetime_to))} 
                       </Typography>
                     </div>
                   </div>

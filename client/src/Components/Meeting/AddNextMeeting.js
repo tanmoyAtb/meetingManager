@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import DatePicker from '../DatePicker/DatePicker';
+import DateTimePicker from '../DatePicker/DateTimePicker';
 import styles from './addMeetingStyle.js';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -22,11 +22,11 @@ class AddMeeting extends Component {
             open: false,
             rtl: true,
             attendees: [],
-            date: new Date(),
-            time: '',
-            time_from: '',
-            time_to: '',
+            datetime: null,
+            datetime_from: null,
+            datetime_to: null,
             client: '',
+            organization: '',
             title: '',
             location: '',
             description: '',
@@ -38,34 +38,33 @@ class AddMeeting extends Component {
 
   handleClickOpen = () => {
     this.setState({ open: true });
-  };
+  }
 
   handleClose = () => {
     this.setState({ open: false });
-  };
-
-  handleDone = () => {
-    this.props.history.push("/");
   }
 
-  meetingUserChange = (selectedOption) => {
-        this.setState({attendees: selectedOption});
+  attendeeChange = (selectedOption) => {
+    this.setState({attendees: selectedOption});
   }
 
-  dateChange = (date) => {
-    this.setState({date: date});
-  }
-
-  timeChange = (e) => {
-    this.setState({time: moment(e.target.value, 'HH:mm').toDate()});
+  dateTimeChange = (datetime) => {
+    console.log(datetime);
+    this.setState({datetime: datetime});
   }
 
   timeFromChange = (e) => {
-    this.setState({time_from: moment(e.target.value, 'HH:mm').toDate()});
+    let time = moment(e.target.value, 'HH:mm');
+    if(time.isValid()){
+      this.setState({time_from: time.toDate()});
+    }
   }
 
   timeToChange = (e) => {
-    this.setState({time_to: moment(e.target.value, 'HH:mm').toDate()});
+    let time = moment(e.target.value, 'HH:mm');
+    if(time.isValid()){
+      this.setState({time_to: time.toDate()});
+    }
   }
 
   titleChange = (e) => {
@@ -74,6 +73,10 @@ class AddMeeting extends Component {
 
   clientChange = (e) => {
     this.setState({client: e.target.value});
+  }
+
+  organizationChange = (e) => {
+    this.setState({ organization: e.target.value});
   }
 
   locationChange = (e) => {
@@ -88,14 +91,15 @@ class AddMeeting extends Component {
     this.setState({summary: e.target.value});
   }
 
+
   addMeeting = (e) => {
     const states = this.state;
     let that = this;
-    if(states.date && states.time && states.title && states.client && states.location && states.attendees.length && states.description){
+    if(states.datetime && states.title && states.client && states.location && states.attendees.length && states.description){
       console.log(states);
       let prevMeeting = {
         id: this.props.meeting._id,
-        date: new Date(this.props.meeting.date),
+        datetime: new Date(this.props.meeting.datetime),
         title: this.props.meeting.title,
         client: this.props.meeting.client
       };
@@ -113,13 +117,16 @@ class AddMeeting extends Component {
   }
 
   componentDidMount() {
-      let that=this;
-      Axios.getMeeting(function(err, data){
-        if (err) return;
-        else {
-          that.setState({attendees_options: data.meetingUsers});
-        }
-      })
+    let that = this;
+    Axios.getUsersList(function(err, data){
+      if(err) {
+        if(err.includes("unauthorized")) that.history.push("/");
+      }
+      else {
+        console.log("users", data.users);
+        that.setState({attendees_options : data.users});
+      }
+    })
   }
 
 
@@ -130,35 +137,15 @@ class AddMeeting extends Component {
     this.state.attendees_options.forEach(function(attendee){
       attendees.push({id: attendee._id, value: attendee.username, label: attendee.name});
     })
+
     return (
       <div className={classes.container}>
           <Typography variant="display1" style={{color: '#263238', marginBottom: 16}} gutterBottom>
-              Add Next Meeting
+              Add Meeting
           </Typography>
           <div  className={classes.spacing}>
-            <DatePicker big dateChange={this.dateChange}/>
+            <DateTimePicker big dateTimeChange={this.dateTimeChange}/>
           </div>
-
-          <TextField
-            id="time"
-            label="Time"
-            type="time"
-            required
-            onChange={this.timeChange}
-            className={classes.spacing}
-            InputLabelProps={{
-              FormLabelClasses: {
-                root: classes.label,
-              },
-              shrink: true,
-              focused: false
-            }}
-            inputProps={{
-              step: 300, 
-              style: {marginTop: 8}
-            }}
-            style={{maxWidth: 600}}
-          />
 
           <div style={{display: 'flex'}}  className={classes.spacing}>
             <TextField
@@ -239,6 +226,26 @@ class AddMeeting extends Component {
             style={{maxWidth: 600}}
           />
 
+          <TextField
+            label="Organization"
+            required
+            onChange={this.organizationChange}
+            className={classes.spacing}
+            InputLabelProps={{
+              FormLabelClasses: {
+                root: classes.label,
+              },
+              shrink: true,
+              focused: false
+            }}
+            inputProps={{
+                step: 300, 
+                style: {marginTop: 8}
+              }}
+            placeholder="Organization"
+            style={{maxWidth: 600}}
+          />
+
            <TextField
             label="Location"
             required
@@ -265,7 +272,7 @@ class AddMeeting extends Component {
               <Select
                   id="Attendees"
                   isMulti
-                  onChange={this.meetingUserChange}
+                  onChange={this.attendeeChange}
                   options={attendees}
                   placeholder="Select Attendee"
                   rtl={this.state.rtl}
@@ -303,7 +310,7 @@ class AddMeeting extends Component {
           />
 
           <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
-              Add Next Meeting
+              Add Meeting
           </Button>
 
 
@@ -319,7 +326,7 @@ class AddMeeting extends Component {
                 {"Meeting Added Successfully"}
               </DialogTitle>
               <DialogActions>
-                <Button onClick={this.handleDone} color="primary">
+                <Button onClick={this.handleClose} color="primary">
                   Done
                 </Button>
               </DialogActions>

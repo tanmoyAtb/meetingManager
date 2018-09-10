@@ -20,6 +20,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import OngoingTenders from './OngoingTenders';
+import BoughtTenders from './BoughtTenders';
+import DroppedTenders from './DroppedTenders';
+import RewardedTenders from './RewardedTenders';
 
 import AddTender from './AddTender';
 
@@ -47,8 +50,18 @@ class Tenders extends Component {
       showAddTender: true,
       value: 0,
       newTenders: [],
+      
       modeOngoing: 'wait',
-      tendersOngoing: []
+      tendersOngoing: [],
+
+      modeBought: 'wait',
+      tendersBought: [],
+
+      modeDropped: 'wait',
+      tendersDropped: [],
+
+      modeRewarded: 'wait',
+      tendersRewarded: []
     };
   }
 
@@ -83,23 +96,58 @@ class Tenders extends Component {
   componentDidMount() {
       let that=this;
       Axios.getProfile(function(err, data){
-        if (err) {
+        if(err) {
           console.log(err);
-          if(err === 'unauthorized') that.props.history.push("/");
+          if(err.includes("unauthorized")) that.history.push("/");
         }
         else {
+          
+          that.setState({mode: 'details', name: data.name, username: data.username});
           that.loadOngoing();
-          that.setState({mode: 'details', name: data.user.name, username: data.user.username});
+          that.loadBought();
+          that.loadDropped();
+          that.loadRewarded();
         }
       })
+  }
+
+  loadRewarded = () => {
+     let that=this;
+      Axios.getRewardedTenders(function(err, data){
+        if(err) {
+          console.log(err);
+          if(err.includes("unauthorized")) that.history.push("/");
+        }
+        else {
+          that.setState({modeRewarded: 'details', tendersRewarded: data.tenders});
+        }
+      })
+  }
+
+  onBoughtSchedule = () => {
+    this.setState({modeOngoing: 'wait', modeBought: 'wait', tendersOngoing:[], tendersBought: []});
+    this.loadOngoing();
+    this.loadBought();
+  }
+
+  onDroppedSchedule = () => {
+    this.setState({modeDropped: 'wait', modeBought: 'wait', tendersDropped: [], tendersBought: []});
+    this.loadBought();
+    this.loadDropped();
+  }
+
+  onRewardedWork = () => {
+    this.setState({modeRewarded: 'wait', modeDropped: 'wait', tendersRewarded: [], tendersDropped: []});
+    this.loadDropped();
+    this.loadRewarded();
   }
 
   loadOngoing = () => {
      let that=this;
       Axios.getOngoingTenders(function(err, data){
-        if (err) {
+        if(err) {
           console.log(err);
-          if(err === 'unauthorized') that.props.history.push("/");
+          if(err.includes("unauthorized")) that.history.push("/");
         }
         else {
           that.setState({modeOngoing: 'details', tendersOngoing: data.tenders});
@@ -107,12 +155,80 @@ class Tenders extends Component {
       })
   }
 
+  loadBought = () => {
+     let that=this;
+      Axios.getBoughtTenders(function(err, data){
+        if(err) {
+          console.log(err);
+          if(err.includes("unauthorized")) that.history.push("/");
+        }
+        else {
+          that.setState({modeBought: 'details', tendersBought: data.tenders});
+        }
+      })
+  }
+
+  loadDropped = () => {
+     let that=this;
+      Axios.getDroppedTenders(function(err, data){
+        if(err) {
+          console.log(err);
+          if(err.includes("unauthorized")) that.history.push("/");
+        }
+        else {
+          that.setState({modeDropped: 'details', tendersDropped: data.tenders});
+        }
+      })
+  }
+
+  onEditNote = (id, note) => {
+    let tendersOn = this.state.tendersOngoing;
+
+    tendersOn.forEach(function(tender){
+      if(tender._id === id){
+        tender.note = note;
+      }
+    })
+
+    let tendersBo = this.state.tendersBought;
+
+    tendersBo.forEach(function(tender){
+      if(tender._id === id){
+        tender.note = note;
+      }
+    })
+
+    let tendersDr = this.state.tendersDropped;
+
+    tendersDr.forEach(function(tender){
+      if(tender._id === id){
+        tender.note = note;
+      }
+    })
+
+    let tendersRe = this.state.tendersRewarded;
+
+    tendersRe.forEach(function(tender){
+      if(tender._id === id){
+        tender.note = note;
+      }
+    })
+
+    this.setState({
+      tendersOngoing: tendersOn,
+      tendersBought: tendersBo,
+      tendersDropped: tendersDr,
+      tendersRewarded: tendersRe
+    })
+  }
+
+
 
   render() {
     const { classes, theme } = this.props;
     return (
       <div >
-        <Header logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
+        <Header tender logout={this.handleLogout} history={this.props.history} name={this.state.name}/>
         <div className={classes.container}>
           <div className={classes.root}>
             <AppBar position="static" color="default">
@@ -126,7 +242,7 @@ class Tenders extends Component {
                 <Tab label="ONGOING TENDERS" />
                 <Tab label="SCHEDULE BOUGHT" />
                 <Tab label="SCHEDULE DROPPED" />
-                <Tab label="WORK ORDERED" />
+                <Tab label="WORK REWARDED" />
                 <Tab label="ADD TENDER" />
               </Tabs>
             </AppBar>
@@ -136,21 +252,29 @@ class Tenders extends Component {
               onChangeIndex={this.handleChangeIndex}
             >
               <TabContainer dir={theme.direction} >
-                <OngoingTenders tenders={this.state.tendersOngoing} mode={this.state.modeOngoing}/>
+                <OngoingTenders onBoughtSchedule={this.onBoughtSchedule}  onDroppedSchedule= {this.onDroppedSchedule} onRewardedWork= {this.onRewardedWork}
+                                tenders={this.state.tendersOngoing} mode={this.state.modeOngoing} onEditNote={this.onEditNote} />
               </TabContainer>
 
-              <TabContainer dir={theme.direction}>SCHEDULE BOUGHT</TabContainer>
+              <TabContainer dir={theme.direction} >
+                <BoughtTenders onDroppedSchedule={this.onDroppedSchedule} onBoughtSchedule= {this.onBoughtSchedule} onRewardedWork= {this.onRewardedWork}
+                                tenders={this.state.tendersBought} mode={this.state.modeBought} onEditNote={this.onEditNote}/>
+              </TabContainer>
 
-              <TabContainer dir={theme.direction}>SCHEDULE DROPPED</TabContainer>
-
-              <TabContainer dir={theme.direction}>WORK ORDERED</TabContainer>
-
+              <TabContainer dir={theme.direction} >
+                <DroppedTenders onRewardedWork={this.onRewardedWork} onBoughtSchedule= {this.onBoughtSchedule} onDroppedSchedule= {this.onDroppedSchedule}
+                                tenders={this.state.tendersDropped} mode={this.state.modeDropped} onEditNote={this.onEditNote}/>
+              </TabContainer>
+              
+              <TabContainer dir={theme.direction} >
+                <RewardedTenders onRewardedWork={this.onRewardedWork} onBoughtSchedule= {this.onBoughtSchedule} onDroppedSchedule= {this.onDroppedSchedule}
+                                  tenders={this.state.tendersRewarded} mode={this.state.modeRewarded} onEditNote={this.onEditNote}/>
+              </TabContainer>
+              
               <TabContainer dir={theme.direction}> 
-
                 <AddTender gotNewTender={this.gotNewTender}/>
-
               </TabContainer>
-
+   
             </SwipeableViews>
           </div>
         </div>
