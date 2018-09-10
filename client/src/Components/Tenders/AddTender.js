@@ -21,10 +21,10 @@ class AddTender extends Component {
     super(props);
     this.state = {
       open: false,
-      datePublishedString: new Date(),
-      dateLastString: new Date(),
-      dateDroppingString: new Date(),
-      dateOpeningString: new Date(),
+      datePublishedString: moment().format('DD/MM/YYYY'),
+      dateLastString: moment().format('DD/MM/YYYY'),
+      dateDroppingString: moment().format('DD/MM/YYYY'),
+      dateOpeningString: moment().format('DD/MM/YYYY'),
       timeLastString: "",
       timeDroppingString: "",
       timeOpeningString: "",
@@ -140,8 +140,6 @@ class AddTender extends Component {
       }).toDate();
     }
 
-    console.log(states)
-
     if(states.dateTimePublished && states.dateTimeLast && states.dateTimeDropping && states.dateTimeOpening 
         && states.client && states.work){
 
@@ -153,10 +151,10 @@ class AddTender extends Component {
         else {
           that.props.gotNewTender(tender);
           that.setState({ open: true,
-            datePublishedString: new Date(),
-            dateLastString: new Date(),
-            dateDroppingString: new Date(),
-            dateOpeningString: new Date(),
+            datePublishedString: moment().format('DD/MM/YYYY'),
+            dateLastString: moment().format('DD/MM/YYYY'),
+            dateDroppingString: moment().format('DD/MM/YYYY'),
+            dateOpeningString: moment().format('DD/MM/YYYY'),
             timeLastString: "",
             timeDroppingString: "",
             timeOpeningString: "",
