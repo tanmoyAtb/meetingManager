@@ -206,7 +206,7 @@ class CardTender extends Component {
                 <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
                     Client : 
                 </Typography>
-                <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
+                <Typography variant="display1" style={{color: '#263238', marginBottom: 16, fontSize: 20, fontWeight: 'bold'}} >
                     {tender.client}
                 </Typography>
 
@@ -216,6 +216,15 @@ class CardTender extends Component {
                       Link
                     </Button>
                 }
+            </div>
+
+            <div>
+              <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
+                  Work : 
+              </Typography>
+              <Typography variant="display1" style={{color: '#263238', marginBottom: 20, fontSize: 20, fontWeight: 'bold'}} >
+                  {tender.work}
+              </Typography>
             </div>
 
             <div style={{display: 'flex', flexWrap: 'wrap'}}>
@@ -268,7 +277,7 @@ class CardTender extends Component {
 		              <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
 		                  {Helpers.format_date(new Date(tender.opening_datetime))} 
 		              </Typography>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 8}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 8, marginBottom: 16}} >
 	                      {Helpers.format_time(new Date(tender.opening_datetime))} 
 	              	  </Typography>
               	  </div>
@@ -279,14 +288,7 @@ class CardTender extends Component {
 
           
 
-          <div>
-            <Typography variant="display1" style={{color: '#263238', fontSize: 14, marginTop: 16}} >
-                Work : 
-            </Typography>
-            <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
-                {tender.work}
-            </Typography>
-          </div>
+          
 
           <div style={{display: 'flex'}}>
 	          <div style={{marginRight: 16}}>
@@ -300,7 +302,7 @@ class CardTender extends Component {
 
 	          <div>
 	            <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
-	                Schedule money
+	                Security money
 	            </Typography>
 	            <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
 	                {tender.security_money + " TK"} 

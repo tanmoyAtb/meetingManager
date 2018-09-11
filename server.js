@@ -15,7 +15,7 @@ mongoose.connect(config.dbUrl, { useMongoClient: true } )
         
     })
     .catch(err => { // if error we will be here
-        console.error('DB starting error');
+        console.error('DB starting error', err);
         //process.exit(1);
     });
 // parse request bodies
