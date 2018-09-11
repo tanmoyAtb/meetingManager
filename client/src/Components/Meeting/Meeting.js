@@ -390,7 +390,7 @@ class Meeting extends Component {
                       step: 300, // 5 min
                       style: {marginTop: 8}
                     }}
-                    defaultValue=""
+                    defaultValue={meeting.summary}
                     margin="normal"
                     placeholder="Summary"
                     style={{maxWidth: 600, width: '100%'}}

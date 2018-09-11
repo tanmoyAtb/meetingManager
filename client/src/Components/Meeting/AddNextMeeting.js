@@ -22,9 +22,10 @@ class AddMeeting extends Component {
             open: false,
             rtl: true,
             attendees: [],
-            datetime: null,
-            datetime_from: null,
-            datetime_to: null,
+            dateString: moment().format('DD/MM/YYYY'),
+            timeString: "",
+            timeFromString: "",
+            timeToString: "",
             client: '',
             organization: '',
             title: '',
@@ -48,23 +49,20 @@ class AddMeeting extends Component {
     this.setState({attendees: selectedOption});
   }
 
-  dateTimeChange = (datetime) => {
-    console.log(datetime);
-    this.setState({datetime: datetime});
+  dateChange = (dateString) => {
+    this.setState({dateString: dateString});
+  }
+
+  timeChange = (timeString) => {
+    this.setState({timeString: timeString});
   }
 
   timeFromChange = (e) => {
-    let time = moment(e.target.value, 'HH:mm');
-    if(time.isValid()){
-      this.setState({time_from: time.toDate()});
-    }
+    this.setState({timeFromString: e.target.value});
   }
 
   timeToChange = (e) => {
-    let time = moment(e.target.value, 'HH:mm');
-    if(time.isValid()){
-      this.setState({time_to: time.toDate()});
-    }
+    this.setState({timeToString: e.target.value});
   }
 
   titleChange = (e) => {
@@ -93,8 +91,27 @@ class AddMeeting extends Component {
 
 
   addMeeting = (e) => {
-    const states = this.state;
+
+    let states = this.state;
     let that = this;
+
+    let date = moment(states.dateString, 'DD/MM/YYYY');
+    let time = moment(states.timeString, 'HH:mm');
+
+    let time_from = moment(states.timeFromString, 'HH:mm');
+    let time_to = moment(states.timeToString, 'HH:mm');
+
+
+    if(date.isValid() && time.isValid()){
+      states.datetime = date.set({
+          hour:   time.get('hour'),
+          minute: time.get('minute')
+      }).toDate();
+    }
+    if(time_from.isValid()) states.datetime_from = time_from.toDate();
+    if(time_to.isValid()) states.datetime_to = time_to.toDate();
+
+
     if(states.datetime && states.title && states.client && states.location && states.attendees.length && states.description){
       console.log(states);
       let prevMeeting = {
@@ -144,7 +161,7 @@ class AddMeeting extends Component {
               Add Meeting
           </Typography>
           <div  className={classes.spacing}>
-            <DateTimePicker big dateTimeChange={this.dateTimeChange}/>
+            <DateTimePicker big dateString={this.state.dateString} timeString={this.state.timeString} timeChange={this.timeChange} dateChange={this.dateChange}/>
           </div>
 
           <div style={{display: 'flex'}}  className={classes.spacing}>
