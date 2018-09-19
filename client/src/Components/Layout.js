@@ -42,6 +42,10 @@ class Layout extends Component {
 
   loggedIn = (data) => {
     this.setState({logged: 'loggedin', name: data.name, username: data.username});
+    this.getUsersList();
+    this.getUpcomingMeetings();
+    this.getUnresolvedMeetings();
+    this.getHistoryMeetings();
   }
 
   onUpcomingDateChange = (date) => {
