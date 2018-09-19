@@ -127,7 +127,7 @@ class AddMeeting extends Component {
             if(err === 'unauthorized') that.props.history.push("/");
         }
         else {
-          that.handleClickOpen();
+          that.props.history.push(`/meeting/${meeting._id}`);
         }
       })
     }
@@ -158,7 +158,7 @@ class AddMeeting extends Component {
     return (
       <div className={classes.container}>
           <Typography variant="display1" style={{color: '#263238', marginBottom: 16}} gutterBottom>
-              Add Meeting
+              Add Next Meeting
           </Typography>
           <div  className={classes.spacing}>
             <DateTimePicker big dateString={this.state.dateString} timeString={this.state.timeString} timeChange={this.timeChange} dateChange={this.dateChange}/>
@@ -327,7 +327,7 @@ class AddMeeting extends Component {
           />
 
           <Button variant="contained" style= {{maxWidth: 220, marginBottom: 240}} onClick={this.addMeeting} color="primary" className={classes.spacing}>
-              Add Meeting
+              Add Next Meeting
           </Button>
 
 
