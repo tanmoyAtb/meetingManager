@@ -102,19 +102,21 @@ class Meeting extends Component {
     console.log(data);
     let prevMeeting = {
       id: this.state.meeting._id,
-      date: new Date(this.state.meeting.date),
+      datetime: new Date(this.state.meeting.datetime),
       title: this.state.meeting.title,
       client: this.state.meeting.client
-    }
+    };
     let that=this;
 
-    Axios.postNextMeeting(prevMeeting, data, function(err, meeting){
+    Axios.postNextMeeting(prevMeeting, data, function(err, data){
       if(err) {
         console.log(err);
         if(err.includes("unauthorized")) that.history.push("/");
       }
       else {
-        that.props.history.push(`/meeting/${meeting._id}`);
+        console.log(data);
+        that.props.history.push(`/meeting/${data.meeting._id}`);
+        window.location.reload();
       }
     })
 
@@ -126,7 +128,7 @@ class Meeting extends Component {
     Axios.editMeeting(this.props.match.params.id, data, function(err, data){
        if(err) {
           console.log(err);
-          if(err.includes("unauthorized")) that.history.push("/");
+          if(err.includes("unauthorized")) that.props.history.push("/");
         }
         else {
           if(data.meeting && data.meeting._id){
@@ -183,6 +185,8 @@ class Meeting extends Component {
     else if(mode === 'details' && meeting){
       let attendees = "";
 
+      let labelSummary = "Add Summary";
+      if(meeting.done) labelSummary = "Edit Summary";
       let counter=0;
       let len = meeting.attendees.length;
       meeting.attendees.forEach(function(attendee){
@@ -370,7 +374,7 @@ class Meeting extends Component {
                 PaperProps={{style: {flex: 1}}}
               >
                 <DialogTitle id="alert-dialog-slide-title">
-                  {"Add Summary"}
+                  {labelSummary}
                 </DialogTitle>
                 <DialogContent>
                   <TextField

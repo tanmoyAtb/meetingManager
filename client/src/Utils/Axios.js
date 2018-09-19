@@ -319,9 +319,11 @@ class Axios {
 	      
 	        axios.post(url + '/auth/nextmeeting', {prevMeeting: prevMeeting, data: data})
 	          .then(res => {
+	          	console.log("got result");
 	            callback(null, res.data);
 	          })
 	          .catch((error) => {
+	          	console.log("error");
 	             if(error.response){
 	             	if(error.response.status === 401){
 	             		localStorage.removeItem('jwtToken');

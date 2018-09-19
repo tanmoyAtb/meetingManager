@@ -93,7 +93,6 @@ class AddMeeting extends Component {
   addMeeting = (e) => {
 
     let states = this.state;
-    let that = this;
 
     let date = moment(states.dateString, 'DD/MM/YYYY');
     let time = moment(states.timeString, 'HH:mm');
@@ -113,23 +112,7 @@ class AddMeeting extends Component {
 
 
     if(states.datetime && states.title && states.client && states.location && states.attendees.length && states.description){
-      console.log(states);
-      let prevMeeting = {
-        id: this.props.meeting._id,
-        datetime: new Date(this.props.meeting.datetime),
-        title: this.props.meeting.title,
-        client: this.props.meeting.client
-      };
-
-      Axios.postNextMeeting(prevMeeting, states, function(err, meeting){
-        if(err){
-          console.log(err);
-            if(err === 'unauthorized') that.props.history.push("/");
-        }
-        else {
-          that.props.history.push(`/meeting/${meeting._id}`);
-        }
-      })
+      this.props.addNextMeeting(states);
     }
   }
 

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Loader from 'Components/Loader/Loader';
 import Card from '../Card/Card';
-import Axios from 'Utils/Axios';
 import DateRadio from '../Body/DateRadio'
 
 const styles = theme => ({

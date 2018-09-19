@@ -11,7 +11,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import Select from 'react-select';
 import moment from 'moment';
 
 import Axios from 'Utils/Axios';
@@ -90,11 +89,11 @@ class AddTender extends Component {
   }
 
   scheduleMoneyChange = (e) => {
-    this.setState({scheduleMoney: parseInt(e.target.value)});
+    this.setState({scheduleMoney: parseInt(e.target.value, 10)});
   }
 
   securityMoneyChange = (e) => {
-    this.setState({securityMoney: parseInt(e.target.value)});
+    this.setState({securityMoney: parseInt(e.target.value, 10)});
   }
 
   linkChange = (e) => {

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Loader from 'Components/Loader/Loader';
 import CardTender from '../Card/CardTender';
-import Axios from 'Utils/Axios';
 
 const styles = theme => ({
   container: {

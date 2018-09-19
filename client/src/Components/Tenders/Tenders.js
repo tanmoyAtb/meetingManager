@@ -1,18 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Header from '../Header/Header';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Slide from '@material-ui/core/Slide';
-import TextField from '@material-ui/core/TextField';
 import Axios from 'Utils/Axios';
-import Helpers from 'Utils/Helpers';
-import Loader from 'Components/Loader/Loader';
-import Card from '../Card/Card';
 
 import SwipeableViews from 'react-swipeable-views';
 import AppBar from '@material-ui/core/AppBar';
@@ -28,9 +18,6 @@ import AddTender from './AddTender';
 
 import styles from './tendersStyle';
 
-function Transition(props) {
-  return <Slide direction="down" {...props} />;
-}
 
 function TabContainer({ children, dir }) {
   return (

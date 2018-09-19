@@ -116,7 +116,7 @@ authRouter.post('/editmeeting', passport.authenticate('jwt', { session: false}),
 });
 
 authRouter.post('/nextmeeting', passport.authenticate('jwt', { session: false}), function(req, res) {
-  
+  console.log("auth next meeting");
   Meeting.insertNextMeeting(req.body.prevMeeting, req.body.data, function(err, meeting){
       if (err) {
         return res.status(500).send({success: false, msg: 'Server Error.'});

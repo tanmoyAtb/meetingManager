@@ -96,7 +96,6 @@ class EditMeeting extends Component {
 
   editMeeting = (e) => {
     let states = this.state;
-    let that = this;
 
     let date = moment(states.dateString, 'DD/MM/YYYY');
     let time = moment(states.timeString, 'HH:mm');

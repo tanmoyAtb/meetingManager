@@ -119,9 +119,11 @@ MeetingSchema.statics.insertMeeting = function(data, cb) {
 };
 
 MeetingSchema.statics.insertNextMeeting = function(prevMeeting, data, cb) {
+    console.log(prevMeeting, data);
     if(data.title && data.client && data.location && data.attendees.length && data.description && Date.parse(data.datetime) && 
         prevMeeting.id && prevMeeting.datetime && prevMeeting.title && prevMeeting.client){
 
+        console.log("here my precious");
         const newMeeting = new this();
         
         let newAttendees = [];
@@ -144,24 +146,26 @@ MeetingSchema.statics.insertNextMeeting = function(prevMeeting, data, cb) {
 
         let that=this;
         
-        newMeeting.save(function(err, meeting) {
+        newMeeting.save(function(err, newSavedMeeting) {
             if (err)
                 return cb(err, null);
             else{
                 var query   = { _id: prevMeeting.id }; 
-                var update  = { "meeting_next.id": meeting._id, 
-                                "meeting_next.datetime": meeting.datetime, 
-                                "meeting_next.title": meeting.title, 
-                                "meeting_next.client": meeting.client
+                var update  = { "meeting_next.id": newSavedMeeting._id, 
+                                "meeting_next.datetime": newSavedMeeting.datetime, 
+                                "meeting_next.title": newSavedMeeting.title, 
+                                "meeting_next.client": newSavedMeeting.client
                             }; 
 
                 var options = { new: true }; 
+                console.log(newSavedMeeting);
 
                 that.findOneAndUpdate(query, update, options, function(err, savedMeeting){ 
                     if (err) {
                         return cb("Server error", null);
                     }else{
-                        return cb(null, savedMeeting);
+                        console.log(savedMeeting);
+                        return cb(null, newSavedMeeting);
                     } 
                 });
             }
@@ -334,7 +338,6 @@ MeetingSchema.statics.getMeetingOnId = function(id, cb) {
     this.findOne({_id : id}, function(err, meeting){
         if (err) {console.log(err); cb(null, null);}
         else {
-            console.log(meeting);
             cb(null, meeting);
         }
 

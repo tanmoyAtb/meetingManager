@@ -3,8 +3,6 @@ import { Switch, Route } from 'react-router-dom';
 import Layout from './Components/Layout';
 import Meeting from './Components/Meeting/Meeting';
 import Tenders from './Components/Tenders/Tenders';
-import Add from './Components/AddMeeting/AddLayout';
-import Meetings from './Components/MeetingsHistory/MeetingsHistory';
 import NotFound from './Components/NotFound';
 
 const Main = () => (

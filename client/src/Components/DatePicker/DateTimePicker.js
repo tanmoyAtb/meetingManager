@@ -7,9 +7,6 @@ import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 
 import Calendar from 'react-calendar';
-import Select from 'react-select';
-
-import Helpers from 'Utils/Helpers';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
@@ -110,9 +107,6 @@ class DatePickerComp extends React.Component {
         dateDate= dateMomentTemp.toDate();
     }
 
-
-    const users = [];
-
     return (
       <div className={classes.container}>
           <div className="dateBoxLarge">
@@ -152,8 +146,6 @@ class DatePickerComp extends React.Component {
                 }}
                 inputProps={{
                   step: 300, 
-                }}
-                InputProps={{
                   style: {marginTop: 10}
                 }}
                 
