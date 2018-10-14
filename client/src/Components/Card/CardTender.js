@@ -55,6 +55,7 @@ class CardTender extends Component {
         openDropped : false, 
         openBought : false,
         editNote : false,
+        delete : false,
         note: note
       };
 
@@ -90,6 +91,31 @@ class CardTender extends Component {
 
   onEditNote = (e) => {
     this.setState({ editNote: true });
+  }
+
+  handleDeleteClose = () => {
+    this.setState({ delete: false });
+  } 
+
+  onDelete = (e) => {
+    this.setState({ delete: true });
+  }
+
+  onDeleteDone = (e) => {
+    let that = this;
+    let id = this.props.tender._id;
+    console.log("delete triggered");
+    Axios.onDeleteTender(this.props.tender._id, function(err, data){
+      if(err) {
+          console.log(err);
+          if(err.includes("unauthorized")) that.history.push("/");
+      }
+      else{
+        console.log(data);
+        that.handleDeleteClose();
+        that.props.onDeleteTender(id);
+      }
+    })
   }
 
   noteChange = (e) => {
@@ -203,10 +229,10 @@ class CardTender extends Component {
           <div>
             <div style={{display: 'flex', marginTop: 16}}>
               <div>
-                <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
+                <Typography variant="display1" style={{color: '#263238', fontSize: 20, fontWeight: 'bold'}} >
                     Client : 
                 </Typography>
-                <Typography variant="display1" style={{color: '#263238', marginBottom: 16, fontSize: 20, fontWeight: 'bold'}} >
+                <Typography variant="display1" style={{color: '#263238', marginBottom: 16, fontSize: 18}} >
                     {tender.client}
                 </Typography>
 
@@ -219,35 +245,35 @@ class CardTender extends Component {
             </div>
 
             <div>
-              <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
+              <Typography variant="display1" style={{color: '#263238', fontSize: 20, fontWeight: 'bold'}} >
                   Work : 
               </Typography>
-              <Typography variant="display1" style={{color: '#263238', marginBottom: 20, fontSize: 20, fontWeight: 'bold'}} >
+              <Typography variant="display1" style={{color: '#263238', marginBottom: 20, fontSize: 18}} >
                   {tender.work}
               </Typography>
             </div>
 
             <div style={{display: 'flex', flexWrap: 'wrap'}}>
             	<div style={{marginRight: 16}}>
-            	  <Typography variant="display1" style={{color: '#263238', fontSize: 12}} >
+            	  <Typography variant="display1" style={{color: '#263238', fontSize: 20, fontWeight: 'bold'}} >
 	                  Published Date 
 	              </Typography>
 	              <div style={{display: 'flex'}}>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingRight: 110}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 18}} >
 		                  {Helpers.format_date(new Date(tender.published_datetime))} 
 		              </Typography>
               	  </div>
               	</div>
 
               	<div>
-            	  <Typography variant="display1" style={{color: '#263238', fontSize: 12}} >
+            	  <Typography variant="display1" style={{color: '#263238', fontSize: 20, paddingLeft: 40,fontWeight: 'bold'}} >
 	                  Last Date 
 	              </Typography>
 	              <div style={{display: 'flex'}}>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 18, paddingLeft: 40}} >
 		                  {Helpers.format_date(new Date(tender.last_datetime))} 
 		              </Typography>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 8}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 18, paddingLeft: 8}} >
 	                      {Helpers.format_time(new Date(tender.last_datetime))} 
 	              	  </Typography>
               	  </div>
@@ -256,28 +282,28 @@ class CardTender extends Component {
 
             <div style={{display: 'flex', flexWrap: 'wrap', marginTop: 16}}>
             	<div style={{marginRight: 16}}>
-            	  <Typography variant="display1" style={{color: '#263238', fontSize: 12}} >
+            	  <Typography variant="display1" style={{color: '#263238', fontSize: 20, fontWeight: 'bold'}} >
 	                  Dropping Date 
 	              </Typography>
 	              <div style={{display: 'flex'}}>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 18}} >
 		                  {Helpers.format_date(new Date(tender.dropping_datetime))} 
 		              </Typography>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 8}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 18, paddingLeft: 8}} >
 	                      {Helpers.format_time(new Date(tender.dropping_datetime))} 
 	              	  </Typography>
               	  </div>
               	</div>
 
               	<div>
-            	  <Typography variant="display1" style={{color: '#263238', fontSize: 12}} >
+            	  <Typography variant="display1" style={{color: '#263238', fontSize: 20, paddingLeft:10, fontWeight: 'bold'}} >
 	                  Opening Date 
 	              </Typography>
 	              <div style={{display: 'flex'}}>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 18, paddingLeft:10}} >
 		                  {Helpers.format_date(new Date(tender.opening_datetime))} 
 		              </Typography>
-		              <Typography variant="display1" style={{color: '#263238', fontSize: 24, paddingLeft: 8, marginBottom: 16}} >
+		              <Typography variant="display1" style={{color: '#263238', fontSize: 18, paddingLeft: 8, marginBottom: 16}} >
 	                      {Helpers.format_time(new Date(tender.opening_datetime))} 
 	              	  </Typography>
               	  </div>
@@ -292,19 +318,19 @@ class CardTender extends Component {
 
           <div style={{display: 'flex'}}>
 	          <div style={{marginRight: 16}}>
-	            <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
+	            <Typography variant="display1" style={{color: '#263238', fontSize: 20, fontWeight: 'bold'}} >
 	                Schedule money 
 	            </Typography>
-	            <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
+	            <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 18}} >
 	                {tender.schedule_money + " TK"} 
 	            </Typography>
 	          </div>
 
 	          <div>
-	            <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
+	            <Typography variant="display1" style={{color: '#263238', fontSize: 20, fontWeight: 'bold', paddingLeft:24}} >
 	                Security money
 	            </Typography>
-	            <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
+	            <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 18, paddingLeft:24}} >
 	                {tender.security_money + " TK"} 
 	            </Typography>
 	          </div>
@@ -312,17 +338,14 @@ class CardTender extends Component {
 
           <div style={{display: 'flex'}}>
             <div>
-              <Typography variant="display1" style={{color: '#263238', fontSize: 14}} >
+              <Typography variant="display1" style={{color: '#263238', fontSize: 20, fontWeight: 'bold'}} >
                   Note : 
               </Typography>
-              <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 20}} >
+              <Typography variant="display1" style={{color: '#263238', marginBottom: 30, fontSize: 18}} >
                   {tender.note}
               </Typography>
 
             </div>
-            <Button variant="outlined" size="small" color="primary" onClick={this.onEditNote} style={{marginLeft: 24, maxHeight: 40}}>
-              Edit
-            </Button>
           </div>
 
           {this.makeControls()}
@@ -343,6 +366,18 @@ class CardTender extends Component {
                     <i className="fa fa-check" style={{color: 'green'}}></i>  Work rewarded 
               </Typography>
             }
+            <div style={{flex: 1}}></div>
+            {this.props.mode === 'ongoing' && !tender.schedule_dropped &&
+              <div>
+                <Button variant="outlined" size="small" color="primary" onClick={this.onEditNote} style={{marginLeft: 24, maxHeight: 40}}>
+                  Edit
+                </Button>
+                <Button variant="outlined" size="small" color="primary" onClick={this.onDelete} style={{marginLeft: 24, maxHeight: 40}}>
+                  Delete
+                </Button>
+              </div>
+            }
+            
           </div>
 
           <Dialog
@@ -408,6 +443,28 @@ class CardTender extends Component {
                 Yes
               </Button>
               <Button onClick={this.handleCloseBought} color="primary">
+                Cancel
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={this.state.delete}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={this.handleDeleteClose}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+            PaperProps={{style: {flex: 1}}}
+          >
+            <DialogTitle id="alert-dialog-slide-title">
+              {"Are You Sure"}
+            </DialogTitle>
+            <DialogActions>
+              <Button onClick={this.onDeleteDone} color="primary">
+                Yes
+              </Button>
+              <Button onClick={this.handleDeleteClose} color="primary">
                 Cancel
               </Button>
             </DialogActions>

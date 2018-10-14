@@ -763,6 +763,38 @@ class Axios {
 	        callback('unauthorized', null);
 	      }
 	}
+
+	onDeleteTender(id, callback){
+		if(localStorage.getItem('jwtToken')){
+	        axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
+	      	
+	        axios.post(url + '/auth/deletetender', { id: id})
+	          .then(res => {
+	            callback(null, res.data);
+	          })
+	          .catch((error) => {
+	             if(error.response){
+	             	if(error.response.status === 401){
+	             		localStorage.removeItem('jwtToken');
+	             		localStorage.removeItem('name');
+	             		localStorage.removeItem('username');
+	             		callback('unauthorized server', null);
+	             	}
+	             	else{
+	             		console.log(error);
+	             		callback("server error", null);
+	             	}
+	             }
+	             else {
+	             	console.log(error);
+	             	callback("server error", null);
+	             }
+	          });
+	      }
+	      else {
+	        callback('unauthorized', null);
+	      }
+	}
 }
 
 let globalAxios = new Axios();

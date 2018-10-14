@@ -284,6 +284,18 @@ authRouter.post('/editnotetender', passport.authenticate('jwt', { session: false
   
 });
 
+authRouter.post('/deletetender', passport.authenticate('jwt', { session: false}), function(req, res) {
+    console.log(req.body);
+    Tender.deleteTenderOnId(req.body.id, function(err){
+      if(err) {
+        return res.status(500).send({success: false, msg: err});
+      }
+      else {
+        return res.json({success: true});
+      }
+    })
+});
+
 
 
 

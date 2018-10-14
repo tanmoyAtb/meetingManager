@@ -168,6 +168,51 @@ class Tenders extends Component {
       })
   }
 
+  onDeleteTender = (id, note) => {
+    let tendersOn = this.state.tendersOngoing;
+
+    for(let i=0;i<tendersOn.length;i++){
+      if(tendersOn[i]._id === id) {
+        tendersOn.splice(i, 1);
+        break;
+      }
+    }
+
+    let tendersBo = this.state.tendersBought;
+
+    for(let i=0;i<tendersBo.length;i++){
+      if(tendersBo[i]._id === id) {
+        tendersBo.splice(i, 1);
+        break;
+      }
+    }
+
+    let tendersDr = this.state.tendersDropped;
+
+    for(let i=0;i<tendersDr.length;i++){
+      if(tendersDr[i]._id === id) {
+        tendersDr.splice(i, 1);
+        break;
+      }
+    }
+
+    let tendersRe = this.state.tendersRewarded;
+
+    for(let i=0;i<tendersRe.length;i++){
+      if(tendersRe[i]._id === id) {
+        tendersRe.splice(i, 1);
+        break;
+      }
+    }
+
+    this.setState({
+      tendersOngoing: tendersOn,
+      tendersBought: tendersBo,
+      tendersDropped: tendersDr,
+      tendersRewarded: tendersRe
+    })
+  }
+
   onEditNote = (id, note) => {
     let tendersOn = this.state.tendersOngoing;
 
@@ -240,22 +285,26 @@ class Tenders extends Component {
             >
               <TabContainer dir={theme.direction} >
                 <OngoingTenders onBoughtSchedule={this.onBoughtSchedule}  onDroppedSchedule= {this.onDroppedSchedule} onRewardedWork= {this.onRewardedWork}
-                                tenders={this.state.tendersOngoing} mode={this.state.modeOngoing} onEditNote={this.onEditNote} />
+                                tenders={this.state.tendersOngoing} mode={this.state.modeOngoing} onEditNote={this.onEditNote} 
+                                onDeleteTender={this.onDeleteTender}/>
               </TabContainer>
 
               <TabContainer dir={theme.direction} >
                 <BoughtTenders onDroppedSchedule={this.onDroppedSchedule} onBoughtSchedule= {this.onBoughtSchedule} onRewardedWork= {this.onRewardedWork}
-                                tenders={this.state.tendersBought} mode={this.state.modeBought} onEditNote={this.onEditNote}/>
+                                tenders={this.state.tendersBought} mode={this.state.modeBought} onEditNote={this.onEditNote} 
+                                onDeleteTender={this.onDeleteTender}/>
               </TabContainer>
 
               <TabContainer dir={theme.direction} >
                 <DroppedTenders onRewardedWork={this.onRewardedWork} onBoughtSchedule= {this.onBoughtSchedule} onDroppedSchedule= {this.onDroppedSchedule}
-                                tenders={this.state.tendersDropped} mode={this.state.modeDropped} onEditNote={this.onEditNote}/>
+                                tenders={this.state.tendersDropped} mode={this.state.modeDropped} onEditNote={this.onEditNote}
+                                onDeleteTender={this.onDeleteTender}/>
               </TabContainer>
               
               <TabContainer dir={theme.direction} >
                 <RewardedTenders onRewardedWork={this.onRewardedWork} onBoughtSchedule= {this.onBoughtSchedule} onDroppedSchedule= {this.onDroppedSchedule}
-                                  tenders={this.state.tendersRewarded} mode={this.state.modeRewarded} onEditNote={this.onEditNote}/>
+                                  tenders={this.state.tendersRewarded} mode={this.state.modeRewarded} onEditNote={this.onEditNote}
+                                  onDeleteTender={this.onDeleteTender}/>
               </TabContainer>
               
               <TabContainer dir={theme.direction}> 

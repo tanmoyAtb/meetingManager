@@ -38,6 +38,7 @@ class Ongoing extends Component {
       let onDroppedSchedule = this.props.onDroppedSchedule;
       let onRewardedWork = this.props.onRewardedWork;
       let onEditNote = this.props.onEditNote;
+      let onDeleteTender = this.props.onDeleteTender;
 
       return (
         <div style={{marginTop: 24, padding: 1}}>
@@ -48,7 +49,8 @@ class Ongoing extends Component {
             this.props.tenders.map(function(tender){
               return (
                   <CardTender mode="ongoing" key={tender._id} tender={tender} onEditNote={onEditNote}
-                  onBoughtSchedule={onBoughtSchedule}  onDroppedSchedule= {onDroppedSchedule} onRewardedWork={onRewardedWork} />
+                  onBoughtSchedule={onBoughtSchedule}  onDroppedSchedule= {onDroppedSchedule} onRewardedWork={onRewardedWork} 
+                  onDeleteTender={onDeleteTender}/>
                 )
             })
           }
