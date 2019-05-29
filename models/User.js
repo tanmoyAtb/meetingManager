@@ -17,7 +17,6 @@ const UserSchema = new Schema({
 });
 
 UserSchema.statics.checkUser = function(username, password, cb) {
-    var that = this;
     this.findOne({ username: username}, function(err, user) {
         if (err) cb("Server error", null);
         if (!user) {
@@ -33,8 +32,18 @@ UserSchema.statics.checkUser = function(username, password, cb) {
     });
 };
 
+UserSchema.statics.signupUser = function(name, username, password, cb) {
+  let newUser = new this({
+    name, username, password
+  })
+  newUser.save().then(user => {
+    cb(null, user)
+  }).catch(err => {
+    cb("server error", null);
+  })
+};
+
 UserSchema.statics.getUserlist = function(cb) {
-    var that = this;
     this.find(function(err, users) {
         if (err) cb("Server error", null);
         else{

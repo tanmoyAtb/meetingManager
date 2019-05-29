@@ -1,3 +1,5 @@
+// this is a script file, not used within project
+
 const User = require('./models/User');
 const mongoose = require('mongoose');
 const config = require('./settings/config');
